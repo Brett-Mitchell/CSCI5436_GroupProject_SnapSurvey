@@ -29,7 +29,7 @@ public class ContentServlet extends HttpServlet {
 	
 	private Configuration cfg;
 	private String templateDir = "/WEB-INF/templates";
-	private String servletUrl = SnapSurveyConf.hostName + "/content";
+	private String servletUrl = SnapSurveyConf.HOSTNAME + "/content";
 	
 	// Internal utility class for building a context map from a servlet request
 	private static class PageContextBuilder {
@@ -121,7 +121,7 @@ public class ContentServlet extends HttpServlet {
     // This servlet provides html content based on the url given. Which
     // ftl template is used is determined by the Pages map
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String url = request.getRequestURL().toString().substring(this.servletUrl.length());
+		String url = request.getRequestURL().toString().substring(servletUrl.length());
 		Template t = null;
 		
 		System.out.println(url);
