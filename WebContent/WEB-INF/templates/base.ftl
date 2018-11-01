@@ -10,6 +10,10 @@
 
 </#macro>
 
+<#macro profile>
+
+</#macro>
+
 <#macro run>
 
     <!DOCTYPE html>
@@ -22,7 +26,13 @@
         </head>
 
         <body>
-        	<div id="title-bar"><h1>SnapSurvey</h1></div>
+
+            <!-- Header bar. Contains software name and user profile image -->
+            <div class="row" id="header-bar">
+                <h5 class="col-auto mr-auto my-auto ml-3" id="software-name">SnapSurvey</h5>
+                <@profile />
+            </div>
+
             <@body/>
         </body>
 

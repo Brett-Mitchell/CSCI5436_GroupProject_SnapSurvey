@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ResultSetContainer implements Iterable<HashMap<String, Object>> {
 	
-	private String tableName;
+	private String tableName = "";
 	private List<HashMap<String, Object>> results = new ArrayList<HashMap<String, Object>>();
 	private List<String> columns = new ArrayList<String>();
 	
@@ -24,8 +24,12 @@ public class ResultSetContainer implements Iterable<HashMap<String, Object>> {
 		for (int i = 1; i <= columnCount; i++)
 			columns.add(rsMeta.getColumnName(i));
 		
-		// Get the table name for the result set (assumed that only one table is contained in rs)
-		this.tableName = rsMeta.getTableName(1);
+		int i = 0;
+		String plus = "";
+		while (rsMeta.getTableName(++i) != null) {
+			this.tableName += plus + rsMeta.getTableName(i);
+			plus = " + ";
+		}
 		
 		while(rs.next()) {
 			// Create a new row

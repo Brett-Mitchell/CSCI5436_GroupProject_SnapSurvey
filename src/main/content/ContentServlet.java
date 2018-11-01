@@ -124,8 +124,6 @@ public class ContentServlet extends HttpServlet {
 		String url = request.getRequestURL().toString().substring(servletUrl.length());
 		Template t = null;
 		
-		System.out.println(url);
-		
 		try {
 			if (pages.containsKey(url)) {
 				t = cfg.getTemplate(pages.get(url).fileName);

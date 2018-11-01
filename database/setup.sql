@@ -6,12 +6,14 @@ USE snapsurvey;
 -- users stores the username and authentication information for SnapSurvey users
 CREATE TABLE users (
     id          INT NOT NULL AUTO_INCREMENT,
-    username    VARCHAR(32),
-    salt        VARCHAR(16),
-    auth_hash   VARCHAR(64),
+    username    VARCHAR(32) NOT NULL,
+    email       VARCHAR(64) NOT NULL
+    salt        VARCHAR(16) NOT NULL,
+    auth_hash   VARCHAR(64) NOT NULL,
 
     PRIMARY KEY (id),
-    UNIQUE  KEY (username)
+    UNIQUE  KEY (username),
+    UNIQUE  KEY (email)
 );
 
 -- Researchers are a class of users who are allowed to create and activate
@@ -20,7 +22,7 @@ CREATE TABLE researchers (
     id INT NOT NULL,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES users(id)
+    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Participants are a class of users who are allowed to take surveys and submit
@@ -29,7 +31,7 @@ CREATE TABLE participants (
     id INT NOT NULL,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES users(id)
+    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Survey forms store the structure of surveys and relate survey forms to the
@@ -37,10 +39,10 @@ CREATE TABLE participants (
 CREATE TABLE survey_forms (
     id          INT NOT NULL AUTO_INCREMENT,
     title       VARCHAR(32),
-    researchers INT NOT NULL,
+    researcher  INT NOT NULL,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (researchers) REFERENCES researchers(id)
+    FOREIGN KEY (researcher) REFERENCES researchers(id) ON DELETE CASCADE
 );
 
 -- survey_form_questions relates individual questions in a survey form to their
@@ -51,7 +53,7 @@ CREATE TABLE survey_form_questions (
     `text` VARCHAR(500) NOT NULL,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (form) REFERENCES survey_forms(id)
+    FOREIGN KEY (form) REFERENCES survey_forms(id) ON DELETE CASCADE
 );
 
 -- survey_form_question_choices only apply to multiple choice questions and
@@ -62,7 +64,7 @@ CREATE TABLE survey_form_question_choices (
     `text`   VARCHAR(100) NOT NULL,
 
     PRIMARY KEY (id),
-    FOREIGN KEY (question) REFERENCES survey_form_questions(id)
+    FOREIGN KEY (question) REFERENCES survey_form_questions(id) ON DELETE CASCADE
 );
 
 -- survey_responses records the value of submitted responses. The submitting
@@ -75,8 +77,8 @@ CREATE TABLE survey_responses (
 
     PRIMARY KEY (id),
     UNIQUE  KEY (survey, participant),
-    FOREIGN KEY (survey) REFERENCES survey_forms(id),
-    FOREIGN KEY (participant) REFERENCES participants(id)
+    FOREIGN KEY (survey) REFERENCES survey_forms(id) ON DELETE CASCADE,
+    FOREIGN KEY (participant) REFERENCES participants(id) ON DELETE CASCADE
 );
 
 -- survey_response_values acts as a base type for text values and choice values,
@@ -88,8 +90,8 @@ CREATE TABLE survey_response_values (
 
     PRIMARY KEY (id),
     UNIQUE  KEY (id, question, survey_response),
-    FOREIGN KEY (question) REFERENCES survey_form_questions(id),
-    FOREIGN KEY (survey_response) REFERENCES survey_responses(id)
+    FOREIGN KEY (question) REFERENCES survey_form_questions(id) ON DELETE CASCADE,
+    FOREIGN KEY (survey_response) REFERENCES survey_responses(id) ON DELETE CASCADE
 );
 
 -- survey_response_text_values are bodies of text in response to a textual
@@ -99,7 +101,7 @@ CREATE TABLE survey_response_text_values (
     `value` VARCHAR(1000),
 
     PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES survey_response_values(id)
+    FOREIGN KEY (id) REFERENCES survey_response_values(id) ON DELETE CASCADE
 );
 
 -- survey_response_choice_values represent the selections made by the user on
@@ -113,8 +115,8 @@ CREATE TABLE survey_response_choice_values (
     -- since id is unique, only choice can have multiple values in any given PK
     -- pair
     PRIMARY KEY (id, choice),
-    FOREIGN KEY (id) REFERENCES survey_response_values(id),
-    FOREIGN KEY (choice) REFERENCES survey_form_question_choices(id)
+    FOREIGN KEY (id) REFERENCES survey_response_values(id) ON DELETE CASCADE,
+    FOREIGN KEY (choice) REFERENCES survey_form_question_choices(id) ON DELETE CASCADE
 );
 
 -- STORED PROCEDURES
@@ -144,6 +146,38 @@ BEGIN
         INSERT INTO participants (id)
         VALUES (@user_id);
     END CASE;
+
+    SELECT id
+      FROM users
+     WHERE users.username = un;
+END//
+
+-- update_user takes a user id, new username and new password and sets the
+-- username and auth_hash of the user corresponding to the id. This will fail
+-- for usernames which already exist in the database under a different user id.
+CREATE PROCEDURE update_user(id INT, un VARCHAR(32), pw VARCHAR(32))
+-- id INT: id is the integer id of the user row to change
+-- un VARCHAR(32): un is the new username
+-- pw VARCHAR(32): pw is the new password
+__proc:BEGIN
+    SELECT COUNT(username)
+      INTO @matching_users
+      FROM users
+     WHERE users.id = id;
+    
+    IF (@matching_users = 1) THEN
+        SELECT salt
+          INTO @salt
+          FROM users
+         WHERE users.id = id;
+        
+        SET @auth_hash = SHA2(CONCAT(pw, @salt), 256);
+
+        UPDATE users
+           SET username  = un,
+               auth_hash = @auth_hash
+         WHERE users.id = id;
+    END IF;
 END//
 
 -- authenticate_user takes a username and password and returns whether or not
@@ -156,7 +190,6 @@ CREATE PROCEDURE authenticate_user(un VARCHAR(32), pw VARCHAR(32))
 -- valid_auth is not defined as an OUT parameter; rather, a value of 0 or 1 will
 -- be SELECTed as output from the procedure
 __proc:BEGIN
-
     SELECT COUNT(username)
       INTO @matching_usernames
       FROM users
@@ -180,7 +213,6 @@ __proc:BEGIN
     END IF;
 
     SELECT 0 AS 'valid';
-
 END//
 
 DELIMITER ;

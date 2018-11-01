@@ -12,18 +12,7 @@ public class DB {
 
 	private static String user = "root";
 	private static String password = "root";
-	private static String connString = "jdbc:mysql://localhost:3306/imdb?useSSL=false";
-	
-	private static List<String> tableNames = Arrays.asList(
-			"actors",
-			"actors2",
-			"directors",
-			"directors_genres",
-			"movies",
-			"movies_directors",
-			"movies_genres",
-			"roles"
-	);
+	private static String connString = "jdbc:mysql://localhost:3306/snapsurvey?useSSL=false";
 
 	private static Connection getConnection() throws SQLException {
 		Connection c = DriverManager.getConnection(connString, user, password);
@@ -31,18 +20,21 @@ public class DB {
 		return c;
 	}
 	
-	public static ResultSet get(String table) throws SQLException {
+	public static ResultSet execQuery(String query) throws SQLException {
 		ResultSet rs;
 		
 		Connection c = getConnection();
 		Statement s = c.createStatement();
 		
-		String q =
-				  "SELECT * "
-				+ "FROM " + table + ";";
-		
-		rs = s.executeQuery(q);
+		rs = s.executeQuery(query);
 		
 		return rs;
+	}
+	
+	public static void execNonQuery(String query) throws SQLException {
+		Connection c = getConnection();
+		Statement s = c.createStatement();
+		
+		s.execute(query);
 	}
 }
