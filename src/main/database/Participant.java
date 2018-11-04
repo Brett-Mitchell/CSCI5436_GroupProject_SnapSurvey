@@ -1,7 +1,5 @@
 package main.database;
 
-import java.sql.ResultSet;
-
 public class Participant extends User {
 
 	public Participant(String username, String password) {
@@ -17,12 +15,14 @@ public class Participant extends User {
 		return 1;
 	}
 	
-	public static ResultSet get(int ...ids) {
-		return User.get("participants", ids);
+	public static SelectBuilder<Participant> SELECTOR() {
+		return new SelectBuilder<Participant>("users", Participant.class).joinOn("participants", "id");
 	}
-	
-	public static ResultSet get(String ...usernames) {
-		return User.get("participants", usernames);
+
+	@Override
+	public void set(String field, Object value) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

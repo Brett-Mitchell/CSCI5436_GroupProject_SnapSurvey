@@ -5,15 +5,13 @@ import java.sql.SQLException;
 
 public abstract class User implements Table {
 	
-	public int id = -1;
+	protected int id = -1;
 	public String username;
 	public String password;
-	protected String salt;
-	protected String auth_hash;
 	
 	protected abstract int getUserType();
 	
-	public boolean validAuth() {
+	public boolean authenticate() {
 		String q = "CALL authenticate_user('" + this.username + "','" + this.password + "');";
 		try {
 			ResultSet rs = DB.execQuery(q);
@@ -35,7 +33,7 @@ public abstract class User implements Table {
 		this.password = password;
 	}
 	
-	public static ResultSet get(String userSubType, String ...usernames) {
+	protected static ResultSet getRaw(String userSubType, String ...usernames) {
 		String str_usernames = "(";
 		for (String username : usernames)
 			str_usernames += "'" + username + "',";
@@ -54,7 +52,7 @@ public abstract class User implements Table {
 		}
 	}
 	
-	public static ResultSet get(String userSubType, int ...ids) {
+	protected static ResultSet getRaw(String userSubType, int ...ids) {
 		String str_ids = "(";
 		for (int id : ids)
 			str_ids += Integer.toString(id) + ",";
@@ -70,6 +68,17 @@ public abstract class User implements Table {
 			return DB.execQuery(q);
 		} catch (SQLException e) {
 			return null;
+		}
+	}
+	
+	public void set(String field, Object value) {
+		switch (field) {
+		case "id":
+			this.id = ((Integer)value).intValue();
+			break;
+		case "username":
+			this.username = (String)value;
+			break;
 		}
 	}
 	

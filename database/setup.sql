@@ -42,6 +42,7 @@ CREATE TABLE survey_forms (
     researcher  INT NOT NULL,
 
     PRIMARY KEY (id),
+    UNIQUE  KEY (researcher, title),
     FOREIGN KEY (researcher) REFERENCES researchers(id) ON DELETE CASCADE
 );
 
@@ -52,7 +53,8 @@ CREATE TABLE survey_form_questions (
     form   INT NOT NULL,
     `text` VARCHAR(500) NOT NULL,
 
-    PRIMARY KEY (id),
+    PRIMARY KEY (form, id),
+    UNIQUE  KEY (form, `text`),
     FOREIGN KEY (form) REFERENCES survey_forms(id) ON DELETE CASCADE
 );
 
@@ -63,7 +65,8 @@ CREATE TABLE survey_form_question_choices (
     question SMALLINT NOT NULL,
     `text`   VARCHAR(100) NOT NULL,
 
-    PRIMARY KEY (id),
+    PRIMARY KEY (question, id),
+    UNIQUE  KEY (question, `text`),
     FOREIGN KEY (question) REFERENCES survey_form_questions(id) ON DELETE CASCADE
 );
 

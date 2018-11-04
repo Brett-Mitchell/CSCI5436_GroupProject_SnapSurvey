@@ -7,11 +7,10 @@ public class TestDatabase {
 	public static void main(String[] args) {
 		
 		try {
-		Researcher re = new Researcher("new_un", "new_pass");
-		re.create();
-		System.out.println(re.validAuth());
-		
-		
+			SelectBuilder<Researcher> sb = Researcher.SELECTOR()
+					.where("users", "id", "3")
+					.whereIn("users", "username", "bob", "alice");
+			sb.get();
 		} catch (Exception e) { System.out.println(e.getMessage()); }
 		
 	}

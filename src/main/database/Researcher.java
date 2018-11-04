@@ -1,10 +1,6 @@
 package main.database;
 
-import java.sql.ResultSet;
-
 public class Researcher extends User {
-	
-	protected String subTable = "researchers";
 	
 	public Researcher(String username, String password) {
 		super(username, password);
@@ -14,16 +10,19 @@ public class Researcher extends User {
 		super(id, username, password);
 	}
 
+	@Override
 	protected int getUserType() {
 		return 0;
 	}
 	
-	public static ResultSet get(int ...ids) {
-		return User.get("researchers", ids);
+	public static SelectBuilder<Researcher> SELECTOR() {
+		return new SelectBuilder<Researcher>("users", Researcher.class).joinOn("researchers", "id");
 	}
 	
-	public static ResultSet get(String ...usernames) {
-		return User.get("researchers", usernames);
+	@Override
+	public void set(String field, Object value) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
