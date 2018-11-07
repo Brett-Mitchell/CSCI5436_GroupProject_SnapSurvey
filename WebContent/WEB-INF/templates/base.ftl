@@ -2,15 +2,30 @@
 
 </#macro>
 
+<#macro headertag>
+
+</#macro>
+
+<#macro profile>
+
+</#macro>
+
+<#macro header>
+    <!-- Header bar. Contains software name and user profile image -->
+    <div class="foreground" id="header-bar">
+        <div class="row no-spacing">
+            <h3 class="col-auto my-auto ml-3" id="software-name">SnapSurvey</h3>
+            <@headertag />
+            <@profile />
+        </div>
+    </div>
+</#macro>
+
 <#macro body>
 
 </#macro>
 
 <#macro footer>
-
-</#macro>
-
-<#macro profile>
 
 </#macro>
 
@@ -20,19 +35,15 @@
 
     <html>
         <head>
+            <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
         	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-        	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
+            <link rel="stylesheet" href="/css/base.css">
+        	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.js"></script>
             <@head/>
         </head>
 
-        <body>
-
-            <!-- Header bar. Contains software name and user profile image -->
-            <div class="row" id="header-bar">
-                <h5 class="col-auto mr-auto my-auto ml-3" id="software-name">SnapSurvey</h5>
-                <@profile />
-            </div>
-
+        <body class="background">
+            <@header/>
             <@body/>
         </body>
 

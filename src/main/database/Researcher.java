@@ -21,8 +21,7 @@ public class Researcher extends User {
 	
 	@Override
 	public void set(String field, Object value) {
-		// TODO Auto-generated method stub
-		
+		super.set(field, value);
 	}
 	
 }

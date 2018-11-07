@@ -33,44 +33,6 @@ public abstract class User implements Table {
 		this.password = password;
 	}
 	
-	protected static ResultSet getRaw(String userSubType, String ...usernames) {
-		String str_usernames = "(";
-		for (String username : usernames)
-			str_usernames += "'" + username + "',";
-		
-		str_usernames = str_usernames.substring(0, str_usernames.length() - 1) + ")";
-
-		String joinStr = userSubType == "NONE" ? "" : "JOIN " + userSubType + " ON users.id=" + userSubType + ".id ";
-		String q = "SELECT * FROM users " + joinStr + "WHERE username in " + str_usernames + ";";
-		
-		System.out.println(q);
-		
-		try {
-			return DB.execQuery(q);
-		} catch (SQLException e) {
-			return null;
-		}
-	}
-	
-	protected static ResultSet getRaw(String userSubType, int ...ids) {
-		String str_ids = "(";
-		for (int id : ids)
-			str_ids += Integer.toString(id) + ",";
-		
-		str_ids = str_ids.substring(0, str_ids.length() - 1) + ")";
-		
-		String joinStr = userSubType == "NONE" ? "" : "JOIN " + userSubType + " ON users.id=" + userSubType + ".id ";
-		String q = "SELECT * FROM users " + joinStr + "WHERE id in " + str_ids + ";";
-		
-		System.out.println(q);
-		
-		try {
-			return DB.execQuery(q);
-		} catch (SQLException e) {
-			return null;
-		}
-	}
-	
 	public void set(String field, Object value) {
 		switch (field) {
 		case "id":

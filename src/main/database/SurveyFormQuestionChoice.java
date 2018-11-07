@@ -1,6 +1,5 @@
 package main.database;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SurveyFormQuestionChoice implements Table {
@@ -9,26 +8,13 @@ public class SurveyFormQuestionChoice implements Table {
 	protected int _question;
 	public String text;
 	
-	public static SurveyFormQuestionChoice get(int question, String text) {
-		String q = "SELECT * FROM survey_form_question_choices "
-				 + "WHERE question=" + question + " AND `text`='" + text + "';";
-		
-		return null;
+	public static SelectBuilder<SurveyFormQuestionChoice> SELECT() {
+		return new SelectBuilder<SurveyFormQuestionChoice>("survey_form_question_choices", SurveyFormQuestionChoice.class);
 	}
 	
-	public static SurveyFormQuestionChoice get(int question, int id) {
-		return null;
-	}
-	
-	public static SurveyFormQuestionChoice get(SurveyFormQuestion question, String text) {
-		return SurveyFormQuestionChoice.get(question.id(), text);
-	}
-	
-	public static SurveyFormQuestionChoice get(SurveyFormQuestion question, int id) {
-		return SurveyFormQuestionChoice.get(question.id(), id);
-	}
+	public SurveyFormQuestionChoice() {}
 
-	public SurveyFormQuestionChoice(int id, int question, String text) {
+	/*public SurveyFormQuestionChoice(int id, int question, String text) {
 		this._id = id;
 		this._question = question;
 		this.text = text;
@@ -40,23 +26,45 @@ public class SurveyFormQuestionChoice implements Table {
 	}
 
 	public SurveyFormQuestionChoice(SurveyFormQuestion question, String text) {
-		this._question = question.id();
+		this._question = question.getId();
 		this.text = text;
-	}
+	}*/
 	
 	public int id() {
 		return this._id;
 	}
 	
 	public void create() {
-		String q = "INSERT INTO survey_form_questions ";
+		String q = "INSERT INTO survey_form_question_choices (question, text) "
+				 + "VALUES ('" + this._question + "','" + this.text + "');";
 		
 		try {
 			DB.execNonQuery(q);
 		} catch(SQLException e) {}
 	}
-	public void update() {}
-	public void delete() {}
+	
+	public void update() {
+		String q = "UPDATE survey_form_question_choices "
+				 + "SET question=" + this._question + ", `text`='" + this.text + "' "
+				 + "WHERE id=" + this._id + ";";
+		
+		try {
+			DB.execNonQuery(q);
+		} catch(SQLException e) {}
+	}
+	
+	public void delete() {
+		String q = "DELETE FROM survey_form_question_choices ";
+		
+		if (this._id != -1)
+			q += "WHERE id=" + this._id + ";";
+		else
+			q += "WHERE question=" + this._question + " AND `text`='" + this.text + "';";
+		
+		try {
+			DB.execNonQuery(q);
+		} catch(SQLException e) {}
+	}
 
 	@Override
 	public void set(String field, Object value) {

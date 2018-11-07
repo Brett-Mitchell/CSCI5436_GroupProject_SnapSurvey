@@ -1,6 +1,5 @@
 package main.database;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SurveyFormQuestion implements Table {
@@ -9,15 +8,16 @@ public class SurveyFormQuestion implements Table {
 	protected int form;
 	public String text;
 	
-	public static SurveyFormQuestion get(int form, String text) {
-		return null;
+	public static SelectBuilder<SurveyFormQuestion> SELECT() {
+		return new SelectBuilder<SurveyFormQuestion>("survey_form_questions", SurveyFormQuestion.class);
 	}
 	
-	public static SurveyFormQuestion get(int form, int id) {
-		return null;
-	}
+	public int getId() { return this._id; }
+	public String getText() { return this.text; }
 	
-	public SurveyFormQuestion(int id, int form, String text) {
+	public SurveyFormQuestion() {}
+	
+	/*public SurveyFormQuestion(int id, int form, String text) {
 		this._id = id;
 		this.form = form;
 		this.text = text;
@@ -30,32 +30,63 @@ public class SurveyFormQuestion implements Table {
 
 	public SurveyFormQuestion(int id, SurveyForm form, String text) {
 		this._id = id;
-		this.form = form.id();
+		this.form = form.getId();
 		this.text = text;
 	}
 
 	public SurveyFormQuestion(SurveyForm form, String text) {
-		this.form = form.id();
+		this.form = form.getId();
 		this.text = text;
-	}
-	
-	public int id() {
-		return this._id;
-	}
+	}*/
 	
 	public void create() {
-		String q = "INSERT INTO survey_form_questions ";
+		String q = "INSERT INTO survey_form_questions (form, `text`) "
+				 + "VALUES (" + this.form + ", '" + this.text + "');";
 		
 		try {
 			DB.execNonQuery(q);
 		} catch(SQLException e) {}
 	}
-	public void update() {}
-	public void delete() {}
+	
+	public void update() {
+		String q = "UPDATE survey_form_questions "
+				 + "SET form=" + this.form + ", `text`='" + this.text + "' "
+		 		 + "WHERE id=" + this._id + ";";
+		
+		try {
+			DB.execNonQuery(q);
+		} catch(SQLException e) {}
+	}
+	
+	public void delete() {
+		String q = "DELETE FROM survey_form_questions ";
+		
+		if (this._id != -1)
+			q += "WHERE id=" + this._id + ";";
+		else
+			q += "WHERE form=" + this.form + " AND `text`='" + this.text + "';";
+		
+		try {
+			DB.execNonQuery(q);
+		} catch(SQLException e) {}
+	}
 
 	@Override
 	public void set(String field, Object value) {
-		
+		switch (field) {
+		case "id":
+			this._id = ((Integer)value).intValue();
+			break;
+		case "form":
+			this.form = ((Integer)value).intValue();
+			break;
+		case "text":
+			this.text = (String)value;
+			break;
+		default:
+			System.out.println("Field " + field + " not found.");
+			break;
+		}
 	}
 
 }

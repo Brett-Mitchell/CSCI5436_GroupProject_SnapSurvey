@@ -1,6 +1,5 @@
 package main.database;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,35 +8,68 @@ public class SurveyForm implements Table {
 	
 	protected int _id = -1;
 	protected List<SurveyFormQuestion> questions = new ArrayList<SurveyFormQuestion>();
-	protected int researcher;
+	protected int _researcher;
 	public String title;
 	
-	public static ResultSet get(int researcher, String title) {
-		return null;
-	}
-	
-	public static ResultSet get(int id) {
-		return null;
+	public static SelectBuilder<SurveyForm> SELECT() {
+		return new SelectBuilder<SurveyForm>("survey_forms", SurveyForm.class);
 	}
 	
 	public SurveyForm() {}
 	
-	public int id() { return this._id; }
+	public int getId() { return this._id; }
+	
+	public String getTitle() { return this.title; }
+	public int getResearcher() { return this._researcher; }
 	
 	public void create() {
-		String q = "INSERT INTO survey_forms ";
+		String q = "INSERT INTO survey_forms (researcher, title) "
+				 + "VALUES ('" + this._researcher + "','" + this.title + "');";
 		
 		try {
 			DB.execNonQuery(q);
 		} catch(SQLException e) {}
 	}
-	public void update() {}
-	public void delete() {}
+	
+	public void update() {
+		String q = "UPDATE survey_forms "
+				 + "SET researcher=" + this._researcher + ", title='" + this.title + "' "
+				 + "WHERE id=" + this._id + ";";
+		
+		try {
+			DB.execNonQuery(q);
+		} catch(SQLException e) {}
+	}
+	
+	public void delete() {
+		String q = "DELETE FROM survey_forms ";
+		
+		if (this._id != -1)
+			q += "WHERE id=" + this._id + ";";
+		else
+			q += "WHERE researcher=" + this._researcher + " AND title='" + this.title + "';";
+		
+		try {
+			DB.execNonQuery(q);
+		} catch(SQLException e) {}
+	}
 
 	@Override
 	public void set(String field, Object value) {
-		// TODO Auto-generated method stub
-		
+		switch (field) {
+		case "id":
+			this._id = ((Integer)value).intValue();
+			break;
+		case "researcher":
+			this._researcher = ((Integer)value).intValue();
+			break;
+		case "title":
+			this.title = (String)value;
+			break;
+		default:
+			System.out.println("Field " + field + " not found.");
+			break;
+		}
 	}
 	
 }

@@ -18,6 +18,8 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
 import main.SnapSurveyConf;
+import main.content.context.ResearcherDashboardContextBuilder;
+import main.content.context.ResearcherEditSurveyFormContextBuilder;
 
 /**
  * Servlet implementation class ContentServlet
@@ -32,10 +34,8 @@ public class ContentServlet extends HttpServlet {
 	private String servletUrl = SnapSurveyConf.HOSTNAME + "/content";
 	
 	// Internal utility class for building a context map from a servlet request
-	private static class PageContextBuilder {
-		public HashMap<String, Object> getContext(HttpServletRequest req) {
-			throw new UnsupportedOperationException("PageContextBuilder.getContext is not implemented");
-		}
+	public static abstract class PageContextBuilder {
+		public abstract HashMap<String, Object> getContext(HttpServletRequest req);
 	}
 	
 	// Internal utility class for containing related ftl files and their context builders
@@ -77,14 +77,16 @@ public class ContentServlet extends HttpServlet {
 						return new HashMap<String, Object>();
 					}
 				}));
-		pages.put("/dashboard", new PageEntry(
-				"dashboard.ftl",
+		pages.put("/r/dashboard", new PageEntry("researcher-dashboard.ftl", new ResearcherDashboardContextBuilder()));
+		pages.put("/r/edit-survey", new PageEntry("researcher-edit-survey-form.ftl", new ResearcherEditSurveyFormContextBuilder()));
+		pages.put("/p/dashboard", new PageEntry(
+				"participant-dashboard.ftl",
 				new PageContextBuilder() {
 					public HashMap<String, Object> getContext(HttpServletRequest req) {
 						return new HashMap<String, Object>();
 					}
 				}));
-		pages.put("/take-survey", new PageEntry(
+		pages.put("/p/take-survey", new PageEntry(
 				"take-survey.ftl",
 				new PageContextBuilder() {
 					public HashMap<String, Object> getContext(HttpServletRequest req) {
@@ -133,7 +135,9 @@ public class ContentServlet extends HttpServlet {
 				t = cfg.getTemplate(SnapSurveyConf.ERROR_TEMPLATE);
 				t.process(null, response.getWriter());
 			}
-		} catch (TemplateException e) {}
+		} catch (TemplateException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

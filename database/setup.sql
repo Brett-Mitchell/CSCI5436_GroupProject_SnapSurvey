@@ -7,7 +7,7 @@ USE snapsurvey;
 CREATE TABLE users (
     id          INT NOT NULL AUTO_INCREMENT,
     username    VARCHAR(32) NOT NULL,
-    email       VARCHAR(64) NOT NULL
+    email       VARCHAR(64) NOT NULL,
     salt        VARCHAR(16) NOT NULL,
     auth_hash   VARCHAR(64) NOT NULL,
 
@@ -53,7 +53,7 @@ CREATE TABLE survey_form_questions (
     form   INT NOT NULL,
     `text` VARCHAR(500) NOT NULL,
 
-    PRIMARY KEY (form, id),
+    PRIMARY KEY (id, form),
     UNIQUE  KEY (form, `text`),
     FOREIGN KEY (form) REFERENCES survey_forms(id) ON DELETE CASCADE
 );
@@ -65,9 +65,38 @@ CREATE TABLE survey_form_question_choices (
     question SMALLINT NOT NULL,
     `text`   VARCHAR(100) NOT NULL,
 
-    PRIMARY KEY (question, id),
+    PRIMARY KEY (id, question),
     UNIQUE  KEY (question, `text`),
     FOREIGN KEY (question) REFERENCES survey_form_questions(id) ON DELETE CASCADE
+);
+
+-- Stores survey deployments. Can be restricted with a date range or be provided
+-- with only a start date. 
+CREATE TABLE survey_deploys (
+    id          INT NOT NULL AUTO_INCREMENT,
+    survey_form INT NOT NULL,
+    ended       BIT NOT NULL DEFAULT 0,
+    `start`     TIMESTAMP NOT NULL,
+    `end`       TIMESTAMP NULL,
+
+    PRIMARY KEY (id),
+    FOREIGN KEY (survey_form) REFERENCES survey_forms (id) ON DELETE CASCADE
+);
+
+-- Associates survey deployments with an email. The association is linked only
+-- to email to facilitate invites to both anonymous and registered participants.
+-- There is no table for anonymous responses. If an invited email has no
+-- associated participant entry, that invite and its associated response are
+-- considered anonymous, and if the email is used to create an account,
+-- previously anonymous responses will have an associated participant account.
+CREATE TABLE survey_deploy_invites (
+    id            INT NOT NULL AUTO_INCREMENT,
+    survey_deploy INT NOT NULL,
+    email         VARCHAR(64) NOT NULL,
+
+    PRIMARY KEY (id),
+    UNIQUE  KEY (survey_deploy, email),
+    FOREIGN KEY (survey_deploy) REFERENCES survey_deploys (id) ON DELETE CASCADE
 );
 
 -- survey_responses records the value of submitted responses. The submitting
@@ -75,13 +104,13 @@ CREATE TABLE survey_form_question_choices (
 -- participant is allowed
 CREATE TABLE survey_responses (
     id          INT NOT NULL AUTO_INCREMENT,
-    survey      INT NOT NULL,
-    participant INT NOT NULL,
+    survey_form INT NOT NULL,
+    invite      INT NOT NULL,
 
     PRIMARY KEY (id),
-    UNIQUE  KEY (survey, participant),
-    FOREIGN KEY (survey) REFERENCES survey_forms(id) ON DELETE CASCADE,
-    FOREIGN KEY (participant) REFERENCES participants(id) ON DELETE CASCADE
+    UNIQUE  KEY (survey_form, invite),
+    FOREIGN KEY (survey_form) REFERENCES survey_forms (id) ON DELETE CASCADE,
+    FOREIGN KEY (invite) REFERENCES survey_deploy_invites (id) ON DELETE CASCADE
 );
 
 -- survey_response_values acts as a base type for text values and choice values,
@@ -129,20 +158,21 @@ DELIMITER //
 -- new_user takes a username, password and user type and creates the proper
 -- table entries for the base user and user type tables. It creates a new salt
 -- string and only stores the SHA256 hash of the user's password for security
-CREATE PROCEDURE new_user(un VARCHAR(32), pw VARCHAR(32), usr_type BIT)
+CREATE PROCEDURE new_user(un VARCHAR(32), pw VARCHAR(32), email VARCHAR(64), user_type BIT)
 -- un VARCHAR(32): The username to add as a new user
--- pw VARCHAR(32): Th password for the new user
+-- pw VARCHAR(32): The password for the new user
+-- email VARCHAR(64): The email of the new user
 -- usr_type BIT: Represents the type of user: 0 -> researchers, 1 -> participant
 BEGIN
     SET @salt = HEX(RANDOM_BYTES(8));
     SET @auth_hash = SHA2(CONCAT(pw, @salt), 256);
 
-    INSERT INTO users (username, salt, auth_hash)
-    VALUES (un, @salt, @auth_hash);
+    INSERT INTO users (username, email, salt, auth_hash)
+    VALUES (un, email, @salt, @auth_hash);
 
     SET @user_id = LAST_INSERT_ID();
 
-    CASE WHEN usr_type = 0 THEN
+    CASE WHEN user_type = 0 THEN
         INSERT INTO researchers (id)
         VALUES (@user_id);
     WHEN user_type = 1 THEN
@@ -158,7 +188,7 @@ END//
 -- update_user takes a user id, new username and new password and sets the
 -- username and auth_hash of the user corresponding to the id. This will fail
 -- for usernames which already exist in the database under a different user id.
-CREATE PROCEDURE update_user(id INT, un VARCHAR(32), pw VARCHAR(32))
+CREATE PROCEDURE update_user(id INT, un VARCHAR(32), pw VARCHAR(32), email VARCHAR(64))
 -- id INT: id is the integer id of the user row to change
 -- un VARCHAR(32): un is the new username
 -- pw VARCHAR(32): pw is the new password
@@ -178,6 +208,7 @@ __proc:BEGIN
 
         UPDATE users
            SET username  = un,
+               email     = email,
                auth_hash = @auth_hash
          WHERE users.id = id;
     END IF;
@@ -219,3 +250,58 @@ __proc:BEGIN
 END//
 
 DELIMITER ;
+
+-- Demo data for SnapSurvey
+
+-- Create 2 researchers
+CALL new_user("researcher1", "password", "r1@gmail.com", 0);
+CALL new_user("researcher2", "password", "r2@gmail.com", 0);
+
+-- Create 10 participants
+CALL new_user("participant1", "password", "p1@gmail.com", 1);
+CALL new_user("participant2", "password", "p2@gmail.com", 1);
+CALL new_user("participant3", "password", "p3@gmail.com", 1);
+CALL new_user("participant4", "password", "p4@gmail.com", 1);
+CALL new_user("participant5", "password", "p5@gmail.com", 1);
+CALL new_user("participant6", "password", "p6@gmail.com", 1);
+CALL new_user("participant7", "password", "p7@gmail.com", 1);
+CALL new_user("participant8", "password", "p8@gmail.com", 1);
+CALL new_user("participant9", "password", "p9@gmail.com", 1);
+CALL new_user("participant10", "password", "p10@gmail.com", 1);
+
+-- Create 7 demo forms for researcher1
+INSERT INTO survey_forms (title, researcher)
+VALUES
+('Burger Survey', 1),
+('Invasive Survey', 1),
+('Survey 3', 1),
+('Survey 4', 1),
+('Survey 5', 1),
+('Survey 6', 1),
+('Survey 7', 1);
+
+INSERT INTO survey_form_questions (form, `text`)
+VALUES
+-- survey 1, researcher 1
+(1, "Describe the perfect burger"),
+(1, "If you could only have one, which of the following condiments would you prefer?"),
+(1, "Would you eat a quinoa burger?"),
+(1, "What is the best kind of burger bun?"),
+-- survey 2, researcher 1
+(2, "What is your SSN?"),
+(2, "Please list all credit/debit card numbers"),
+(2, "What is your billing address?");
+
+INSERT INTO survey_form_question_choices (question, `text`)
+VALUES
+-- survey 1, question 2
+(2, "Ketchup"),
+(2, "Mayonaise"),
+(2, "Mustard"),
+(2, "Relish"),
+-- survey 1, question 3
+(3, "Definitely no"),
+(3, "Probably (but definitely) no");
+
+INSERT INTO survey_deploys (survey_form, ended, `start`)
+VALUES (1, 0, NOW());

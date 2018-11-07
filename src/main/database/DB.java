@@ -13,6 +13,14 @@ public class DB {
 	private static String user = "root";
 	private static String password = "root";
 	private static String connString = "jdbc:mysql://localhost:3306/snapsurvey?useSSL=false";
+	
+	static {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private static Connection getConnection() throws SQLException {
 		Connection c = DriverManager.getConnection(connString, user, password);

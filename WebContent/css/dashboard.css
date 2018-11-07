@@ -1,0 +1,41 @@
+
+.survey-forms-card {
+    width: 10rem;
+    height: 10rem;
+    margin-left: 1rem;
+    padding: 1rem;
+}
+
+.survey-forms-card:hover {
+    background-color: #EDF7FA;
+}
+
+.survey-forms-card:active {
+    background-color: #E9EEF0;
+    width: 9.9rem;
+    height: 9.9rem;
+    margin-left: 1.05rem;
+    margin-top: 0.05rem;
+    margin-right: 0.05rem;
+}
+
+.dashboard-section-title {
+    margin-top: 0.5rem;
+    padding: 0.2rem;
+    padding-left: 3rem;
+    border-radius: 0;
+}
+
+.dashboard-item-row-wrapper {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    height: 12rem;
+    max-width: 100%;
+    margin-top: 0.3rem;
+}
+
+.dashboard-item-row {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    padding-right: 1rem;
+}
