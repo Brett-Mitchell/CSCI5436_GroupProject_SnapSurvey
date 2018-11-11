@@ -17,12 +17,12 @@
 
     <!-- Main content. Contains lists of survey forms and survey deploys -->
     <div class="content-wrapper">
-        <div class="col no-spacing">
+        <div class="col mp-0">
             <!-- Survey forms -->
             <div class="foreground card dashboard-section-title">
-                <h4 class="my-auto">Survey Forms</h4>
+                <h4 class="my-auto header-text">Survey Forms</h4>
             </div>
-            <div class="row no-spacing dashboard-item-row-wrapper">
+            <div class="row mp-0 dashboard-item-row-wrapper">
                 <div class="dashboard-item-row"
                      id="survey-forms-row">
                     <#list survey_forms as survey>
@@ -33,11 +33,12 @@
                     </#list>
                 </div>
             </div>
+
             <!-- Current surveys -->
             <div class="foreground card dashboard-section-title">
-                <h4 class="my-auto">Current Survey Deployments</h4>
+                <h4 class="my-auto header-text">Current Survey Deployments</h4>
             </div>
-            <div class="row no-spacing dashboard-item-row-wrapper">
+            <div class="row mp-0 dashboard-item-row-wrapper">
                 <div class="dashboard-item-row"
                      id="current-deploys-row">
                     <#list current_survey_deploys as deploy>
@@ -48,12 +49,13 @@
                     </#list>
                 </div>
             </div>
+            
             <!-- Past surveys -->
             <div class="foreground card dashboard-section-title">
-                <h4 class="my-auto">Past Survey Deployments</h4>
+                <h4 class="my-auto header-text">Past Survey Deployments</h4>
             </div>
             
-            <div class="row no-spacing dashboard-item-row-wrapper">
+            <div class="row mp-0 dashboard-item-row-wrapper">
                 <div class="dashboard-item-row">
                 </div>
             </div>

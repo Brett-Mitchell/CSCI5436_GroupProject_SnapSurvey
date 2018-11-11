@@ -2,6 +2,15 @@
 <#include "edit-survey-form-question.ftl">
 
 <#macro head>
+    <script>
+    var questions = {
+        <#assign i=1>
+        <#list questions as q>
+            '${i}': ${q.id},
+            <#assign i++>
+        </#list>
+    };
+    </script>
     <script src="/js/researcher-edit-form.js"></script>
     <link href="/css/edit-form.css" rel="stylesheet">
 </#macro>
@@ -37,11 +46,16 @@
 
     <!-- Main content. Contains a list of question forms -->
     <div class="content-wrapper">
-        <#list questions as q>
-            <@question q />
-        </#list>
+
+        <div id="question-list">
+            <#assign i=1>
+            <#list questions as q>
+                <@question q />
+                <#assign i++>
+            </#list>
+        </div>
         
-        <div class="row no-spacing">
+        <div class="row mp-0">
             <div class="mx-auto mt-4">
                 <button type="button" data-toggle="modal" data-target="#new-question-modal" class="btn btn-secondary">New Question</button>
                 <button type="button" class="btn btn-primary">Save Form</button>

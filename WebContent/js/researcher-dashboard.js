@@ -21,7 +21,7 @@ window.onload = function() {
     
     var current_deploy_row = document.getElementById('current-deploys-row');
     
-    for (var i = 1; i <= current_deploy_row.childElementCount; i++) {
+    for (i = 1; i <= current_deploy_row.childElementCount; i++) {
         document.getElementById('current-deploy-' + i.toString())
                 .onclick = goToViewSurvey(i);
     }

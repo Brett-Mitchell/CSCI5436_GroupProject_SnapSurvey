@@ -1,6 +1,6 @@
 
 <#macro question q>
-    <div class="card mt-2">
+    <div id="question-${q.id}" class="card">
         <form>
             <div class="form-group mb-1 p-1">
                 <textarea

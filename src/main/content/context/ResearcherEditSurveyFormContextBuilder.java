@@ -22,6 +22,7 @@ public class ResearcherEditSurveyFormContextBuilder extends ContentServlet.PageC
 									.get(0);
 		List<SurveyFormQuestion> questions = SurveyFormQuestion.SELECT()
 															   .where("form", formId)
+															   .orderBy("id")
 															   .get();
 		
 		String[] questionIds = new String[questions.size()];

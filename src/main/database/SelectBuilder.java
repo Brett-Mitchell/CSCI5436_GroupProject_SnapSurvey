@@ -16,7 +16,13 @@ public class SelectBuilder<T extends Table> {
 	private String tables;
 	private int limit = -1;
 	private int offset = 0;
+	private Map<String, String> orderBy = new HashMap<String, String>();
 	private Class<T> clazz;
+	
+	public static enum ORDER_BY_DIRECTION {
+		ASC,
+		DESC
+	}
 	
 	public SelectBuilder(String table, Class<T> clazz) {
 		this.originalTable = table;
@@ -63,7 +69,17 @@ public class SelectBuilder<T extends Table> {
 		return this;
 	}
 	
-	// TODO: Order by method
+	public SelectBuilder<T> orderBy(String fieldName, ORDER_BY_DIRECTION direction) {
+		String ascDesc = "ASC";
+		if (direction == ORDER_BY_DIRECTION.DESC)
+			ascDesc = "DESC";
+		this.orderBy.put(fieldName, ascDesc);
+		return this;
+	}
+	
+	public SelectBuilder<T> orderBy(String fieldName) {
+		return this.orderBy(fieldName, ORDER_BY_DIRECTION.ASC);
+	}
 	
 	// Get builds a SELECT statement from the current parameters and tables state and builds an array
 	// of objects of type T from the ResultSet returned by MySQL
@@ -96,8 +112,16 @@ public class SelectBuilder<T extends Table> {
 		if (this.limit != -1)
 			limit = " LIMIT " + this.offset + ", " + this.limit;
 		
+		String orderBy = "";
+		if (!this.orderBy.isEmpty()) {
+			orderBy = " ORDER BY ";
+			for (Map.Entry<String, String> fieldEntry : this.orderBy.entrySet())
+				orderBy += fieldEntry.getKey() + " " + fieldEntry.getValue() + ",";
+			orderBy = orderBy.substring(0, orderBy.length() - 1);
+		}
+		
 		// Build the final SELECT statement
-		String q = "SELECT * FROM " + this.tables + where + limit + ";";
+		String q = "SELECT * FROM " + this.tables + where + limit + orderBy + ";";
 		
 		System.out.println(q);
 		
