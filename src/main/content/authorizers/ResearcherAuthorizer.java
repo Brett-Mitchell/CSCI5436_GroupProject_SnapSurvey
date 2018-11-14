@@ -9,7 +9,7 @@ import main.database.UserSession;
 public class ResearcherAuthorizer extends Authorizer {
 
 	@Override
-	public boolean auth(HttpServletRequest req) {
+	public boolean authorize(HttpServletRequest req) {
 		UserSession s = UserSession.fromSessionCookie(req);
 		if (s == null) return false;
 		User u = s.getUser();

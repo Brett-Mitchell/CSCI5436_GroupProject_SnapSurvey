@@ -1,22 +1,17 @@
 package main.content.endpoints;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.Gson;
-
-import main.content.ApiServlet;
 import main.database.Participant;
 import main.database.Researcher;
 import main.database.User;
 import main.database.UserSession;
 
-public class LoginEndpoint extends ApiServlet.Endpoint {
+public class LoginEndpoint extends Endpoint {
 
 	@Override
 	public String getApiResponse(HttpServletRequest req, HttpServletResponse res) {
@@ -44,9 +39,6 @@ public class LoginEndpoint extends ApiServlet.Endpoint {
 			userList = (List<User>)((List<?>)Participant.SELECT().where("username", username).get());
 			userType = "p";
 		}
-		
-		//if (!userList.isEmpty())
-		//	return "{\"userType\": \"" + userType + "\"}";
 		
 		User user = userList.get(0);
 		user.password = password;

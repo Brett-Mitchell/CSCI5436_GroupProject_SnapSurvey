@@ -1,15 +1,27 @@
 package main.database;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class SurveyFormQuestion implements Table {
 	
 	protected int _id = -1;
-	protected int form;
+	public int form;
 	public String text;
+	private List<SurveyFormQuestionChoice> choices;
 	
 	public static SelectBuilder<SurveyFormQuestion> SELECT() {
 		return new SelectBuilder<SurveyFormQuestion>("survey_form_questions", SurveyFormQuestion.class);
+	}
+	
+	public void retrieveChoices() {
+		this.choices = SurveyFormQuestionChoice.SELECT()
+				.where("question", Integer.toString(this._id))
+				.get();
+	}
+	
+	public List<SurveyFormQuestionChoice> getChoices() {
+		return this.choices;
 	}
 	
 	public int getId() { return this._id; }
@@ -45,7 +57,9 @@ public class SurveyFormQuestion implements Table {
 		
 		try {
 			DB.execNonQuery(q);
-		} catch(SQLException e) {}
+		} catch(SQLException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	public void update() {

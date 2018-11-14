@@ -22,6 +22,17 @@ public class SurveyForm implements Table {
 	public String getTitle() { return this.title; }
 	public int getResearcher() { return this._researcher; }
 	
+	public void retrieveQuestions() {
+		this.questions = SurveyFormQuestion.SELECT()
+				.where("form", Integer.toString(this._id))
+				.get();
+		
+		for (SurveyFormQuestion q : this.questions)
+			q.retrieveChoices();
+	}
+	
+	public List<SurveyFormQuestion> getQuestions() { return this.questions; }
+	
 	public void create() {
 		String q = "INSERT INTO survey_forms (researcher, title) "
 				 + "VALUES ('" + this._researcher + "','" + this.title + "');";

@@ -1,12 +1,22 @@
 
 <#macro question q>
-    <div id="question-${q.id}" class="card mb-1">
+    <div id="question-${q.id}" class="card question-card-raised mb-1">
         <form>
             <div class="form-group mb-1 p-1">
                 <textarea
                     id="question-text-${q.id}"
                     class="form-control w-100"
                 >${q.text}</textarea>
+            </div>
+            <div id="question-${q.id}-choices" class="choices-column form-group p-1">
+                <#list q.choices as c>
+                    <div class="choice mb-1">
+                        <input class="form-control my-auto" type="text" value="${c.text}" />
+                        <button id="question-${q.id}-choice-${c.id}-delete"
+                                class="btn btn-secondary m-2 my-auto h-80"
+                        >Delete</button>
+                    </div>
+                </#list>
             </div>
             <div class="form-group">
                 <button type="button" 

@@ -81,6 +81,12 @@ public class SelectBuilder<T extends Table> {
 		return this.orderBy(fieldName, ORDER_BY_DIRECTION.ASC);
 	}
 	
+	public T getFirst() {
+		List<T> results = this.get();
+		if (results.isEmpty()) return null;
+		return results.get(0);
+	}
+	
 	// Get builds a SELECT statement from the current parameters and tables state and builds an array
 	// of objects of type T from the ResultSet returned by MySQL
 	public List<T> get() {

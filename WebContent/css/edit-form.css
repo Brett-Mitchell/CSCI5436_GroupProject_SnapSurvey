@@ -1,5 +1,23 @@
 
+#new-question-textarea {
+    height: 128px;
+}
+
 #question-list {
     display: flex;
     flex-direction: column;
+}
+
+.choices-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.choice {
+    display: flex;
+    flex-direction: row;
+}
+
+.question-card-raised {
+    box-shadow: 0 0 5px -1px black;
 }

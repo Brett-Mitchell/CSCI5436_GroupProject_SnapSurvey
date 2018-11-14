@@ -3,5 +3,5 @@ package main.content.authorizers;
 import javax.servlet.http.HttpServletRequest;
 
 public abstract class Authorizer {
-	public abstract boolean auth(HttpServletRequest req);
+	public abstract boolean authorize(HttpServletRequest req);
 }

@@ -1,3 +1,5 @@
+<#assign useBackButton = 0>
+
 <#macro head>
 
 </#macro>
@@ -13,6 +15,9 @@
 <#macro header>
     <!-- Header bar. Contains software name and user profile image -->
     <div class="foreground row mp-0" id="header-bar">
+        <#if useBackButton == 1>
+            <button id="back"><</button>
+        </#if>
         <h3 class="col-auto my-auto ml-3" id="software-name">SnapSurvey</h3>
         <@headertag />
         <@profile />

@@ -30,7 +30,15 @@ public class SurveyFormQuestionChoice implements Table {
 		this.text = text;
 	}*/
 	
-	public int id() {
+	public int getQuestion() {
+		return this._question;
+	}
+	
+	public String getText() {
+		return this.text;
+	}
+	
+	public int getId() {
 		return this._id;
 	}
 	

@@ -51,7 +51,7 @@ public class ContentServlet extends HttpServlet {
 		public Authorizer authorizer = new Authorizer()
 		{
 		    @Override
-			public boolean auth(HttpServletRequest req) { return true; }
+			public boolean authorize(HttpServletRequest req) { return true; }
 		};
 		
 		PageEntry(String p_fileName) {
@@ -137,7 +137,7 @@ public class ContentServlet extends HttpServlet {
 			if (pages.containsKey(url)) {
 				PageEntry pe = pages.get(url);
 				// Exit if the given session is not authorized for the requested page
-				if (!pe.authorizer.auth(request)) {
+				if (!pe.authorizer.authorize(request)) {
 					t = cfg.getTemplate(SnapSurveyConf.UNAUTHORIZED_TEMPLATE);
 					t.process(null, response.getWriter());
 				} else {

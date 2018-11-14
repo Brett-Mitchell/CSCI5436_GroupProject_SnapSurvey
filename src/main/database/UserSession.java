@@ -21,7 +21,7 @@ public class UserSession implements Table {
 	
 	public static UserSession fromSessionCookie(HttpServletRequest request) {
 		String session = "";
-		System.out.println(request.getCookies());
+		
 		if (request.getCookies() == null) return null;
 		
 		for (Cookie c : request.getCookies()) {
