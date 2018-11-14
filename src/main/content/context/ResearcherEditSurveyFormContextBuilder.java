@@ -10,7 +10,7 @@ import main.database.SurveyForm;
 import main.database.SurveyFormQuestion;
 import main.database.SurveyFormQuestionChoice;
 
-public class ResearcherEditSurveyFormContextBuilder extends ContentServlet.PageContextBuilder {
+public class ResearcherEditSurveyFormContextBuilder extends ContextBuilder {
 
 	@Override
 	public HashMap<String, Object> getContext(HttpServletRequest req) {

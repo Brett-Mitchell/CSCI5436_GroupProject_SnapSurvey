@@ -9,7 +9,7 @@ import main.content.ContentServlet;
 import main.database.SurveyDeploy;
 import main.database.SurveyForm;
 
-public class ResearcherDashboardContextBuilder extends ContentServlet.PageContextBuilder {
+public class ResearcherDashboardContextBuilder extends ContextBuilder {
 
 	@Override
 	public HashMap<String, Object> getContext(HttpServletRequest req) {

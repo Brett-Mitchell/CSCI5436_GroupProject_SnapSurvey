@@ -1,6 +1,14 @@
 <#include "base.ftl">
 
-<#macro header></#macro>
+<#macro head>
+	<script>
+	window.onload=function() {
+		$('#home').click(function() {
+			window.location.href = '/content/home-page';
+		});
+	}
+	</script>
+</#macro>
 
 <#macro body>
 
@@ -9,7 +17,7 @@
 	<hr />
 	<p class="">
 		That page doesn't exist on this server. Why don't you try
-		<span><button class="btn btn-primary mx-1">Going Back Home?</button></span>
+		<span><button id="home" class="btn btn-primary mx-1">Going Back Home</button></span>
 	</p>
 </div>
 

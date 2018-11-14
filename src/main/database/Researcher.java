@@ -2,6 +2,8 @@ package main.database;
 
 public class Researcher extends User {
 	
+	public Researcher() { super(); }
+	
 	public Researcher(String username, String password) {
 		super(username, password);
 	}
@@ -15,7 +17,7 @@ public class Researcher extends User {
 		return 0;
 	}
 	
-	public static SelectBuilder<Researcher> SELECTOR() {
+	public static SelectBuilder<Researcher> SELECT() {
 		return new SelectBuilder<Researcher>("users", Researcher.class).joinOn("researchers", "id");
 	}
 	

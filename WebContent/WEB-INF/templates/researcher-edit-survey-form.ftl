@@ -47,7 +47,7 @@
     <!-- Main content. Contains a list of question forms -->
     <div class="content-wrapper">
 
-        <div id="question-list">
+        <div id="question-list" class="p-1">
             <#assign i=1>
             <#list questions as q>
                 <@question q />
@@ -56,7 +56,7 @@
         </div>
         
         <div class="row mp-0">
-            <div class="mx-auto mt-4">
+            <div class="mx-auto my-4">
                 <button type="button" data-toggle="modal" data-target="#new-question-modal" class="btn btn-secondary">New Question</button>
                 <button type="button" class="btn btn-primary">Save Form</button>
             </div>

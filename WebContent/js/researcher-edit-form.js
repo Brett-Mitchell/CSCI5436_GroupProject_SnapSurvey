@@ -2,22 +2,21 @@
 function deleteQuestion(list_idx) {
     // Get the database id corresponding to the given question list index
     var id = questions[list_idx.toString()];
-    console.log(list_idx.toString());
-    console.log('Deleting question with id=' + id);
 
     $.ajax({
-        url: '',
+        url: '/api/delete-survey-form-question',
         method: 'POST',
-        data: {},
+        data: { id: id },
 
     })
-    .done(function() {
+    .done(function(d) {
         for (var i = id + 1; id <= $('#question-list').childCount; i++)
-            $('#question-' + String(i)).attr('id', 'question-' + String(i - 1));
-
-        $('#question-' + String(id)).remove();
+            $('#question-' + i.toString()).attr('id', 'question-' + String(i - 1));
+        console.log(d);
+        $('#question-' + id.toString()).remove();
     })
-    .fail(function() {
+    .fail(function(a, b, c) {
+        console.error(a, b, c);
         alert('Failed to delete question ' + id);
     });
 }
@@ -25,10 +24,8 @@ function deleteQuestion(list_idx) {
 window.onload = function() {
     var numQuestions = $('#question-list >').length;
     for (var i = 1; i <= numQuestions; i++) {
-        console.log($('#question-delete-button-' + i));
-        var _i = i;
-        $('#question-delete-button-' + i).click(function() {
-            deleteQuestion(_i);
-        });
+        $('#question-delete-button-' + i).click((function(_i) {
+            return function() { deleteQuestion(_i); };
+        })(i));
     }
 };

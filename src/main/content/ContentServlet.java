@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -18,8 +19,13 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
 import main.SnapSurveyConf;
+import main.content.authorizers.Authorizer;
+import main.content.authorizers.ParticipantAuthorizer;
+import main.content.authorizers.ResearcherAuthorizer;
+import main.content.context.ContextBuilder;
 import main.content.context.ResearcherDashboardContextBuilder;
 import main.content.context.ResearcherEditSurveyFormContextBuilder;
+import main.database.UserSession;
 
 /**
  * Servlet implementation class ContentServlet
@@ -33,19 +39,34 @@ public class ContentServlet extends HttpServlet {
 	private String templateDir = "/WEB-INF/templates";
 	private String servletUrl = SnapSurveyConf.HOSTNAME + "/content";
 	
-	// Internal utility class for building a context map from a servlet request
-	public static abstract class PageContextBuilder {
-		public abstract HashMap<String, Object> getContext(HttpServletRequest req);
-	}
-	
 	// Internal utility class for containing related ftl files and their context builders
 	private static class PageEntry {
 		public String fileName;
-		public PageContextBuilder contextBuilder;
+		public ContextBuilder contextBuilder = new ContextBuilder() {
+			@Override
+			public HashMap<String, Object> getContext(HttpServletRequest request) {
+				return new HashMap<String, Object>();
+			}
+		};
+		public Authorizer authorizer = new Authorizer()
+		{
+		    @Override
+			public boolean auth(HttpServletRequest req) { return true; }
+		};
 		
-		PageEntry(String p_fileName, PageContextBuilder p_contextBuilder) {
+		PageEntry(String p_fileName) {
+			fileName = p_fileName;
+		}
+		
+		PageEntry(String p_fileName, ContextBuilder p_contextBuilder) {
 			fileName = p_fileName;
 			contextBuilder = p_contextBuilder;
+		}
+		
+		PageEntry(String p_fileName, ContextBuilder p_contextBuilder, Authorizer p_authorizer) {
+			fileName = p_fileName;
+			contextBuilder = p_contextBuilder;
+			authorizer = p_authorizer;
 		}
 	}
 	
@@ -56,43 +77,29 @@ public class ContentServlet extends HttpServlet {
 	static 
 	{
 		//   .put("mapped-url", new PageEntry("file-name", PageContextBuilder /* override getContext */))
-		pages.put("/home-page", new PageEntry(
-				"home-page.ftl",
-				new PageContextBuilder() {
-					public HashMap<String, Object> getContext(HttpServletRequest req) {
-						return new HashMap<String, Object>();
-					}
-				}));
-		pages.put("/login", new PageEntry(
-				"login.ftl",
-				new PageContextBuilder() {
-					public HashMap<String, Object> getContext(HttpServletRequest req) {
-						return new HashMap<String, Object>();
-					}
-				}));
-		pages.put("/register", new PageEntry(
-				"register.ftl",
-				new PageContextBuilder() {
-					public HashMap<String, Object> getContext(HttpServletRequest req) {
-						return new HashMap<String, Object>();
-					}
-				}));
-		pages.put("/r/dashboard", new PageEntry("researcher-dashboard.ftl", new ResearcherDashboardContextBuilder()));
-		pages.put("/r/edit-survey", new PageEntry("researcher-edit-survey-form.ftl", new ResearcherEditSurveyFormContextBuilder()));
+		pages.put("/home-page", new PageEntry("home-page.ftl"));
+		pages.put("/login", new PageEntry("login.ftl"));
+		pages.put("/register", new PageEntry("register.ftl"));
+		pages.put("/r/dashboard", new PageEntry("researcher-dashboard.ftl",
+												new ResearcherDashboardContextBuilder(),
+												new ResearcherAuthorizer()));
+		pages.put("/r/edit-survey", new PageEntry("researcher-edit-survey-form.ftl",
+												  new ResearcherEditSurveyFormContextBuilder(),
+												  new ResearcherAuthorizer()));
 		pages.put("/p/dashboard", new PageEntry(
 				"participant-dashboard.ftl",
-				new PageContextBuilder() {
+				new ContextBuilder() {
 					public HashMap<String, Object> getContext(HttpServletRequest req) {
 						return new HashMap<String, Object>();
 					}
-				}));
+				}, new ParticipantAuthorizer()));
 		pages.put("/p/take-survey", new PageEntry(
 				"take-survey.ftl",
-				new PageContextBuilder() {
+				new ContextBuilder() {
 					public HashMap<String, Object> getContext(HttpServletRequest req) {
 						return new HashMap<String, Object>();
 					}
-				}));
+				}, new ParticipantAuthorizer()));
 	}
 	
     public ContentServlet() {
@@ -128,10 +135,16 @@ public class ContentServlet extends HttpServlet {
 		
 		try {
 			if (pages.containsKey(url)) {
-				t = cfg.getTemplate(pages.get(url).fileName);
-				t.process(pages.get(url).contextBuilder.getContext(request), response.getWriter());
-			}
-			else {
+				PageEntry pe = pages.get(url);
+				// Exit if the given session is not authorized for the requested page
+				if (!pe.authorizer.auth(request)) {
+					t = cfg.getTemplate(SnapSurveyConf.UNAUTHORIZED_TEMPLATE);
+					t.process(null, response.getWriter());
+				} else {
+					t = cfg.getTemplate(pe.fileName);
+					t.process(pe.contextBuilder.getContext(request), response.getWriter());
+				}
+			} else {
 				t = cfg.getTemplate(SnapSurveyConf.ERROR_TEMPLATE);
 				t.process(null, response.getWriter());
 			}

@@ -16,6 +16,16 @@ CREATE TABLE users (
     UNIQUE  KEY (email)
 );
 
+-- sessions stores active sessions for logged-in users
+CREATE TABLE user_sessions (
+    user    INT NOT NULL,
+    id      VARCHAR(128) NOT NULL,
+    expiry  TIMESTAMP NOT NULL,
+
+    PRIMARY KEY (user),
+    FOREIGN KEY (user) REFERENCES users (id)
+);
+
 -- Researchers are a class of users who are allowed to create and activate
 -- survey forms and view survey results
 CREATE TABLE researchers (
@@ -54,7 +64,6 @@ CREATE TABLE survey_form_questions (
     `text` VARCHAR(500) NOT NULL,
 
     PRIMARY KEY (id, form),
-    UNIQUE  KEY (form, `text`),
     FOREIGN KEY (form) REFERENCES survey_forms(id) ON DELETE CASCADE
 );
 

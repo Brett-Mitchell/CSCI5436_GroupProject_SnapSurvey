@@ -1,6 +1,8 @@
 package main.database;
 
 public class Participant extends User {
+	
+	public Participant() { super(); }
 
 	public Participant(String username, String password) {
 		super(username, password);
@@ -15,7 +17,7 @@ public class Participant extends User {
 		return 1;
 	}
 	
-	public static SelectBuilder<Participant> SELECTOR() {
+	public static SelectBuilder<Participant> SELECT() {
 		return new SelectBuilder<Participant>("users", Participant.class).joinOn("participants", "id");
 	}
 

@@ -22,6 +22,8 @@ public abstract class User implements Table {
 		}
 	}
 	
+	public User() {}
+	
 	public User(String username, String password) {
 		this.username = username;
 		this.password = password;
@@ -31,6 +33,10 @@ public abstract class User implements Table {
 		this.id = id;
 		this.username = username;
 		this.password = password;
+	}
+	
+	public int getId() {
+		return this.id;
 	}
 	
 	public void set(String field, Object value) {

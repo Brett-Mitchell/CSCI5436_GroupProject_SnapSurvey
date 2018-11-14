@@ -123,7 +123,7 @@ public class SelectBuilder<T extends Table> {
 		// Build the final SELECT statement
 		String q = "SELECT * FROM " + this.tables + where + limit + orderBy + ";";
 		
-		System.out.println(q);
+		//System.out.println(q);
 		
 		List<T> instances = new ArrayList<T>();
 		

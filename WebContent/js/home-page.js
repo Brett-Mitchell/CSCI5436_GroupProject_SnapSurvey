@@ -1,8 +1,13 @@
 
 function gotoLogin() {
-    window.location.href = "/login";
+    window.location.href = "/content/login";
 }
 
 function gotoRegister() {
-    window.location.href = "/register";
+    window.location.href = "/content/register";
 }
+
+window.onload = function() {
+    $('#login').click(gotoLogin);
+    $('#register').click(gotoRegister);
+};
