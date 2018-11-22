@@ -11,10 +11,27 @@ function goToViewSurvey(id) {
     };
 }
 
-window.onload = function() {
-    var survey_form_row = document.getElementById('survey-forms-row');
+var currentTab = 'survey-forms-tab';
 
-    for (var i = 1; i <= survey_form_row.childElementCount; i++) {
+function openTab(tabName) {
+    return function() {
+        $('#' + currentTab).css('display', 'none');
+        $('#' + tabName).css('display', 'flex');
+        currentTab = tabName;
+    };
+}
+
+window.onload = function() {
+    var survey_form_column = document.getElementById('survey-forms-column');
+
+    $('#survey-forms-tab').css('display', 'flex');
+    $('#current-surveys-tab').css('display', 'none');
+    $('#past-surveys-tab').css('display', 'none');
+    $('#show-survey-forms-button').click(openTab('survey-forms-tab'));
+    $('#show-current-surveys-button').click(openTab('current-surveys-tab'));
+    $('#show-past-surveys-button').click(openTab('past-surveys-tab'));
+
+    for (var i = 1; i <= survey_form_column.childElementCount; i++) {
         document.getElementById('survey-form-' + i.toString())
                 .onclick = goToEditSurvey(i);
     }

@@ -287,7 +287,29 @@ VALUES
 ('Survey 4', 1),
 ('Survey 5', 1),
 ('Survey 6', 1),
-('Survey 7', 1);
+('Survey 7', 1),
+('Survey 8', 1),
+('Survey 9', 1),
+('Survey 10', 1),
+('Survey a', 1),
+('Survey b', 1),
+('Survey c', 1),
+('Survey d', 1),
+('Survey e', 1),
+('Survey f', 1),
+('Survey g', 1),
+('Survey h', 1),
+('Survey i', 1),
+('Survey j', 1),
+('Survey k', 1),
+('Survey l', 1),
+('Survey m', 1),
+('Survey n', 1),
+('Survey o', 1),
+('Survey p', 1),
+('Survey q', 1),
+('Survey r', 1),
+('Survey s', 1);
 
 INSERT INTO survey_form_questions (form, `text`)
 VALUES

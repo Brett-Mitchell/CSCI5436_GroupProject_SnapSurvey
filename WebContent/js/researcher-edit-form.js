@@ -41,7 +41,7 @@ function back() {
 
 function deleteQuestion(list_idx) {
     // Get the database id corresponding to the given question list index
-    var id = questions[list_idx.toString()];
+    var id = questions[list_idx];
     
     $('#question-' + id.toString()).hide();
 

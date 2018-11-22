@@ -8,16 +8,18 @@ import javax.servlet.http.HttpServletRequest;
 import main.content.ContentServlet;
 import main.database.SurveyDeploy;
 import main.database.SurveyForm;
+import main.database.UserSession;
 
 public class ResearcherDashboardContextBuilder extends ContextBuilder {
 
 	@Override
 	public HashMap<String, Object> getContext(HttpServletRequest req) {
-		List<SurveyForm> surveyForms = SurveyForm.SELECT().limit(5)
+		UserSession session = UserSession.fromSessionCookie(req);
+		String researcherId = Integer.toString(session.user);
+		List<SurveyForm> surveyForms = SurveyForm.SELECT().where("researcher", researcherId)
 														  .get();
 		List<SurveyDeploy> currentSurveyDeploys = SurveyDeploy.SELECT()
 				  											  .where("ended", "0")
-															  .limit(5)
 															  .get();
 		
 		HashMap<String, Object> context = new HashMap<String, Object>();

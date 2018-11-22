@@ -9,11 +9,12 @@ import main.database.UserSession;
 public class ResearcherAuthorizer extends Authorizer {
 
 	@Override
-	public boolean authorize(HttpServletRequest req) {
+	public AuthorizationResult authorize(HttpServletRequest req) {
 		UserSession s = UserSession.fromSessionCookie(req);
-		if (s == null) return false;
+		if (s == null)
+			return new AuthorizationResult(false, null);
 		User u = s.getUser();
-		return u != null && u instanceof Researcher;
+		return new AuthorizationResult(u != null && u instanceof Researcher, u);
 	}
 
 }

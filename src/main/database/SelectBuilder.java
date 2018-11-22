@@ -30,11 +30,14 @@ public class SelectBuilder<T extends Table> {
 		this.clazz = clazz;
 	}
 	
-	public SelectBuilder<T> joinOn(String table, String ...joinFields) {
+	public SelectBuilder<T> joinOn(String table, String[] ...joinFields) {
 		String joinFieldsStr = "";
 		String and = "";
-		for (String jf : joinFields) {
-			joinFieldsStr += and + this.originalTable + "." + jf + "=" + table + "." + jf;
+		for (String[] jf : joinFields) {
+			if (jf.length == 1)
+				joinFieldsStr += and + this.originalTable + "." + jf[0] + "=" + table + "." + jf[0];
+			else if (jf.length == 2)
+				joinFieldsStr += and + jf[0] + "=" + jf[1];
 			and = " AND ";
 		}
 		this.tables += " JOIN " + table + " ON " + joinFieldsStr;

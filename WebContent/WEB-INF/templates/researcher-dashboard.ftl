@@ -17,16 +17,18 @@
 
     <!-- Main content. Contains lists of survey forms and survey deploys -->
     <div class="content-wrapper">
-        <!-- Survey forms -->
-        <div class="foreground card dashboard-section-title">
-            <h4 class="my-auto header-text">Survey Forms</h4>
+        <div class="btn-group w-100" id="nav-row">
+            <button id="show-survey-forms-button" type="button" class="btn btn-light">Forms</button>
+            <button id="show-current-surveys-button" type="button" class="btn btn-light">Current Deployments</button>
+            <button id="show-past-surveys-button" type="button" class="btn btn-light">Past Deployments</button>
         </div>
-        <div class="row mp-0 dashboard-item-row-wrapper">
-            <div class="dashboard-item-row"
-                    id="survey-forms-row">
+
+        <!-- Survey forms -->
+        <div id="survey-forms-tab" class="dashboard-item-column-wrapper">
+            <div class="dashboard-item-column" id="survey-forms-column">
                 <#list survey_forms as survey>
                     <div class="foreground card survey-forms-card"
-                            id="survey-form-${survey.id}">
+                         id="survey-form-${survey.id}">
                         <p class="my-auto mx-auto">${survey.title}</p>
                     </div>
                 </#list>
@@ -34,15 +36,11 @@
         </div>
 
         <!-- Current surveys -->
-        <div class="foreground card dashboard-section-title">
-            <h4 class="my-auto header-text">Current Survey Deployments</h4>
-        </div>
-        <div class="row mp-0 dashboard-item-row-wrapper">
-            <div class="dashboard-item-row"
-                    id="current-deploys-row">
+        <div id="current-surveys-tab" class="dashboard-item-column-wrapper">
+            <div class="dashboard-item-column" id="current-deploys-column">
                 <#list current_survey_deploys as deploy>
                     <div class="foreground card survey-forms-card"
-                            id="current-deploy-${deploy.id}">
+                         id="current-deploy-${deploy.id}">
                         <p class="my-auto mx-auto">${deploy.surveyForm}</p>
                     </div>
                 </#list>
@@ -50,12 +48,8 @@
         </div>
         
         <!-- Past surveys -->
-        <div class="foreground card dashboard-section-title">
-            <h4 class="my-auto header-text">Past Survey Deployments</h4>
-        </div>
-        
-        <div class="row mp-0 dashboard-item-row-wrapper">
-            <div class="dashboard-item-row">
+        <div id="past-surveys-tab" class="dashboard-item-column-wrapper">
+            <div class="dashboard-item-column">
             </div>
         </div>
     </div>

@@ -18,7 +18,7 @@ public class Participant extends User {
 	}
 	
 	public static SelectBuilder<Participant> SELECT() {
-		return new SelectBuilder<Participant>("users", Participant.class).joinOn("participants", "id");
+		return new SelectBuilder<Participant>("users", Participant.class).joinOn("participants", new String[] {"id"});
 	}
 
 	@Override

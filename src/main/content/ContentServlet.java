@@ -20,11 +20,13 @@ import freemarker.template.TemplateExceptionHandler;
 
 import main.SnapSurveyConf;
 import main.content.authorizers.Authorizer;
+import main.content.authorizers.Authorizer.AuthorizationResult;
 import main.content.authorizers.ParticipantAuthorizer;
 import main.content.authorizers.ResearcherAuthorizer;
 import main.content.context.ContextBuilder;
 import main.content.context.ResearcherDashboardContextBuilder;
 import main.content.context.ResearcherEditSurveyFormContextBuilder;
+import main.database.User;
 import main.database.UserSession;
 
 /**
@@ -51,7 +53,7 @@ public class ContentServlet extends HttpServlet {
 		public Authorizer authorizer = new Authorizer()
 		{
 		    @Override
-			public boolean authorize(HttpServletRequest req) { return true; }
+			public AuthorizationResult authorize(HttpServletRequest req) { return new AuthorizationResult(true, null); }
 		};
 		
 		PageEntry(String p_fileName) {
@@ -137,7 +139,8 @@ public class ContentServlet extends HttpServlet {
 			if (pages.containsKey(url)) {
 				PageEntry pe = pages.get(url);
 				// Exit if the given session is not authorized for the requested page
-				if (!pe.authorizer.authorize(request)) {
+				AuthorizationResult auth = pe.authorizer.authorize(request);
+				if (!auth.Authorized()) {
 					t = cfg.getTemplate(SnapSurveyConf.UNAUTHORIZED_TEMPLATE);
 					t.process(null, response.getWriter());
 				} else {

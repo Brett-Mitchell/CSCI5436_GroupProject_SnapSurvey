@@ -8,7 +8,7 @@ public class SurveyResponseChoiceValue extends SurveyResponseValue {
 	
 	public static SelectBuilder<SurveyResponseChoiceValue> SELECT() {
 		return new SelectBuilder<SurveyResponseChoiceValue>("survey_response_choice_values", SurveyResponseChoiceValue.class)
-				.joinOn("survey_response_values", "id");
+				.joinOn("survey_response_values", new String[] {"id"});
 	}
 
 	@Override

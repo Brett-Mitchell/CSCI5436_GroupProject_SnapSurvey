@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import main.SnapSurveyConf;
+import main.content.authorizers.Authorizer.AuthorizationResult;
 import main.content.endpoints.*;
 
 /**
@@ -40,7 +41,8 @@ public class ApiServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String url = request.getRequestURL().toString().substring(servletUrl.length());
 		Endpoint endpoint = this.endpoints.get(url);
-		if (endpoint != null && endpoint.authorizer.authorize(request))
+		AuthorizationResult auth = endpoint.provideAuthorizer(request).authorize(request);
+		if (endpoint != null && auth.Authorized())
 			response.getWriter().write(endpoint.getApiResponse(request, response));
 	}
 
