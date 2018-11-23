@@ -61,6 +61,7 @@ CREATE TABLE survey_forms (
 CREATE TABLE survey_form_questions (
     id     SMALLINT NOT NULL AUTO_INCREMENT,
     form   INT NOT NULL,
+    `type` VARCHAR(16) NOT NULL,
     `text` VARCHAR(500) NOT NULL,
 
     PRIMARY KEY (id, form),
@@ -74,10 +75,10 @@ CREATE TABLE survey_form_question_choices (
     question SMALLINT NOT NULL,
     `text`   VARCHAR(100) NOT NULL,
 
-    PRIMARY KEY (id, question),
+    PRIMARY KEY (question, id),
     UNIQUE  KEY (question, `text`),
     FOREIGN KEY (question) REFERENCES survey_form_questions(id) ON DELETE CASCADE
-);
+) ENGINE=MyISAM;
 
 -- Stores survey deployments. Can be restricted with a date range or be provided
 -- with only a start date. 
@@ -150,15 +151,16 @@ CREATE TABLE survey_response_text_values (
 -- choices in order to support multiselect questions, but is restricted from
 -- submitting the same choice twice for the same question
 CREATE TABLE survey_response_choice_values (
-    id     INT NOT NULL,
-    choice TINYINT NOT NULL,
+    id       INT NOT NULL,
+    choice   TINYINT NOT NULL,
+    question SMALLINT NOT NULL,
 
     -- since id is unique, only choice can have multiple values in any given PK
     -- pair
     PRIMARY KEY (id, choice),
     FOREIGN KEY (id) REFERENCES survey_response_values(id) ON DELETE CASCADE,
-    FOREIGN KEY (choice) REFERENCES survey_form_question_choices(id) ON DELETE CASCADE
-);
+    FOREIGN KEY (choice, question) REFERENCES survey_form_question_choices(id, question)
+) ENGINE=MyISAM;
 
 -- STORED PROCEDURES
 
@@ -311,17 +313,17 @@ VALUES
 ('Survey r', 1),
 ('Survey s', 1);
 
-INSERT INTO survey_form_questions (form, `text`)
+INSERT INTO survey_form_questions (form, `type`, `text`)
 VALUES
 -- survey 1, researcher 1
-(1, "Describe the perfect burger"),
-(1, "If you could only have one, which of the following condiments would you prefer?"),
-(1, "Would you eat a quinoa burger?"),
-(1, "What is the best kind of burger bun?"),
+(1, "text", "Describe the perfect burger"),
+(1, "multiple_choice", "If you could only have one, which of the following condiments would you prefer?"),
+(1, "multiple_choice", "Would you eat a quinoa burger?"),
+(1, "text", "What is the best kind of burger bun?"),
 -- survey 2, researcher 1
-(2, "What is your SSN?"),
-(2, "Please list all credit/debit card numbers"),
-(2, "What is your billing address?");
+(2, "number", "What is your SSN?"),
+(2, "text", "Please list all credit/debit card numbers"),
+(2, "text", "What is your billing address?");
 
 INSERT INTO survey_form_question_choices (question, `text`)
 VALUES

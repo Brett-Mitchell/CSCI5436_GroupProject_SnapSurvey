@@ -2,9 +2,7 @@ package main.content.authorizers;
 
 import javax.servlet.http.HttpServletRequest;
 
-import main.content.authorizers.Authorizer.AuthorizationResult;
 import main.database.Participant;
-import main.database.Researcher;
 import main.database.User;
 import main.database.UserSession;
 

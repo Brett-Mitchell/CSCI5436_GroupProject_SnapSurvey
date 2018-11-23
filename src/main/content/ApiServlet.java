@@ -32,6 +32,7 @@ public class ApiServlet extends HttpServlet {
 		endpoints.put("/login", new LoginEndpoint());
 		endpoints.put("/delete-survey-form-question", new DeleteSurveyFormQuestionEndpoint());
 		endpoints.put("/add-survey-form-question", new AddSurveyFormQuestionEndpoint());
+		endpoints.put("/delete-survey-form-question-choice", new DeleteSurveyFormQuestionChoiceEndpoint());
 	}
     
     public ApiServlet() {
@@ -40,7 +41,7 @@ public class ApiServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String url = request.getRequestURL().toString().substring(servletUrl.length());
-		Endpoint endpoint = this.endpoints.get(url);
+		Endpoint endpoint = endpoints.get(url);
 		AuthorizationResult auth = endpoint.provideAuthorizer(request).authorize(request);
 		if (endpoint != null && auth.Authorized())
 			response.getWriter().write(endpoint.getApiResponse(request, response));

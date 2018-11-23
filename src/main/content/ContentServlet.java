@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -26,8 +25,6 @@ import main.content.authorizers.ResearcherAuthorizer;
 import main.content.context.ContextBuilder;
 import main.content.context.ResearcherDashboardContextBuilder;
 import main.content.context.ResearcherEditSurveyFormContextBuilder;
-import main.database.User;
-import main.database.UserSession;
 
 /**
  * Servlet implementation class ContentServlet

@@ -21,3 +21,7 @@
 .question-card-raised {
     box-shadow: 0 0 5px -1px black;
 }
+
+.new-choice-button {
+    border-radius: 50%;
+}

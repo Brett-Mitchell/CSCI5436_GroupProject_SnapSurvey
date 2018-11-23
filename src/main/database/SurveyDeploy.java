@@ -6,30 +6,33 @@ import java.text.SimpleDateFormat;
 
 public class SurveyDeploy implements Table {
 
-	private int _id = -1;
-	private int _survey_form;
-	private boolean _ended;
-	private Timestamp start;
-	private Timestamp end;
+	protected int id = -1;
+	protected int survey_form;
+	protected boolean ended;
+	protected Timestamp start;
+	protected Timestamp end;
 	
 	public static SelectBuilder<SurveyDeploy> SELECT() {
 		return new SelectBuilder<SurveyDeploy>("survey_deploys", SurveyDeploy.class);
 	}
 	
-	public int getId() { return this._id; }
-	public int getSurveyForm() { return this._survey_form; }
+	public int getId() { return this.id; }
+	public int getSurveyForm() { return this.survey_form; }
+	public boolean getEnded() { return this.ended; }
+	public Timestamp getStart() { return this.start; }
+	public Timestamp getEnd() { return this.end; }
 	
 	@Override
 	public void set(String field, Object value) {
 		switch (field) {
 		case "id":
-			this._id = ((Integer)value).intValue();
+			this.id = ((Integer)value).intValue();
 			break;
 		case "survey_form":
-			this._survey_form = ((Integer)value).intValue();
+			this.survey_form = ((Integer)value).intValue();
 			break;
 		case "ended":
-			this._ended = ((Boolean)value).booleanValue();
+			this.ended = ((Boolean)value).booleanValue();
 			break;
 		case "start":
 			this.start = (Timestamp)value;
@@ -50,7 +53,7 @@ public class SurveyDeploy implements Table {
 		if (this.end != null)
 			q += ", end";
 		
-		q += ") VALUES (" + this._id + ", '" + formatter.format(this.start) + "'";
+		q += ") VALUES (" + this.id + ", '" + formatter.format(this.start) + "'";
 		
 		if (this.end != null)
 			q += ", '" + formatter.format(this.end) + "'";
@@ -67,12 +70,12 @@ public class SurveyDeploy implements Table {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
 		
 		String q = "UPDATE survey_deploys "
-				 + "SET survey_form=" + this._survey_form + ", start='" + formatter.format(this.start) + "'";
+				 + "SET survey_form=" + this.survey_form + ", start='" + formatter.format(this.start) + "'";
 		
 		if (this.end != null)
 			q += ", end='" + formatter.format(this.end) + "'";
 		
-		q += " WHERE id=" + this._id + ";";
+		q += " WHERE id=" + this.id + ";";
 		
 		try {
 			DB.execNonQuery(q);
@@ -81,9 +84,9 @@ public class SurveyDeploy implements Table {
 
 	@Override
 	public void delete() {
-		if (this._id != -1) {
+		if (this.id != -1) {
 			String q = "DELETE FROM survey_deploys "
-					 + "WHERE id=" + this._id + ";";
+					 + "WHERE id=" + this.id + ";";
 			
 			try {
 				DB.execNonQuery(q);

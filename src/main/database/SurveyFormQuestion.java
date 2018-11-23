@@ -6,9 +6,10 @@ import java.util.List;
 public class SurveyFormQuestion implements Table {
 	
 	protected int _id = -1;
-	public int form;
-	public String text;
-	private List<SurveyFormQuestionChoice> choices;
+	protected int form;
+	protected String type;
+	protected String text;
+	protected List<SurveyFormQuestionChoice> choices;
 	
 	public static SelectBuilder<SurveyFormQuestion> SELECT() {
 		return new SelectBuilder<SurveyFormQuestion>("survey_form_questions", SurveyFormQuestion.class);
@@ -25,6 +26,7 @@ public class SurveyFormQuestion implements Table {
 	}
 	
 	public int getId() { return this._id; }
+	public String getType() { return this.type; }
 	public String getText() { return this.text; }
 	
 	public SurveyFormQuestion() {}
@@ -93,6 +95,9 @@ public class SurveyFormQuestion implements Table {
 			break;
 		case "form":
 			this.form = ((Integer)value).intValue();
+			break;
+		case "type":
+			this.type = (String)value;
 			break;
 		case "text":
 			this.text = (String)value;

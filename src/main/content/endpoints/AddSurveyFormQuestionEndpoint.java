@@ -3,7 +3,6 @@ package main.content.endpoints;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import main.content.authorizers.ResearcherAuthorizer;
 import main.content.authorizers.SpecificUserAuthorizer;
 import main.database.SurveyForm;
 import main.database.SurveyFormQuestion;
@@ -11,7 +10,7 @@ import main.database.SurveyFormQuestion;
 public class AddSurveyFormQuestionEndpoint extends Endpoint {
 	
 	public AddSurveyFormQuestionEndpoint() {
-		super(new ResearcherAuthorizer());
+		super(new SpecificUserAuthorizer());
 	}
 	
 	@Override
@@ -33,12 +32,10 @@ public class AddSurveyFormQuestionEndpoint extends Endpoint {
 		
 		SurveyFormQuestion q = new SurveyFormQuestion();
 		
-		q.text = text;
-		q.form = formId;
+		q.set("text", text);
+		q.set("form", formId);
 		
 		q.create();
-		
-		System.out.println(q.text + " : " + q.form);
 		
 		return "{\"success\": true}";
 	}

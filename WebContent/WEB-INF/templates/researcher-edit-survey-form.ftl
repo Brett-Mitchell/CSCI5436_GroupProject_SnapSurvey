@@ -4,13 +4,20 @@
 <#macro head>
     <script>
     var formId = ${survey_form.id};
-    var questions = {
+    var questions = [
         <#assign i=1>
         <#list survey_form.questions as q>
-            '${i}': ${q.id},
+            {
+                id: ${q.id},
+                choices: [
+                    <#list q.choices as c>
+                    ${c.id},
+                    </#list>
+                ]
+            },
             <#assign i++>
         </#list>
-    };
+    ];
     </script>
     <script src="/js/researcher-edit-form.js"></script>
     <link href="/css/edit-form.css" rel="stylesheet">
