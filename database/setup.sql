@@ -64,9 +64,9 @@ CREATE TABLE survey_form_questions (
     `type` VARCHAR(16) NOT NULL,
     `text` VARCHAR(500) NOT NULL,
 
-    PRIMARY KEY (id, form),
+    PRIMARY KEY (form, id),
     FOREIGN KEY (form) REFERENCES survey_forms(id) ON DELETE CASCADE
-);
+) ENGINE=MyISAM;
 
 -- survey_form_question_choices only apply to multiple choice questions and
 -- store the choices available to the users who answer the question

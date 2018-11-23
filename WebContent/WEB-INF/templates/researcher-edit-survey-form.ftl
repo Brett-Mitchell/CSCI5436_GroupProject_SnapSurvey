@@ -4,10 +4,10 @@
 <#macro head>
     <script>
     var formId = ${survey_form.id};
-    var questions = [
+    var questions = {
         <#assign i=1>
         <#list survey_form.questions as q>
-            {
+            '${i}': {
                 id: ${q.id},
                 choices: [
                     <#list q.choices as c>
@@ -17,7 +17,7 @@
             },
             <#assign i++>
         </#list>
-    ];
+    };
     </script>
     <script src="/js/researcher-edit-form.js"></script>
     <link href="/css/edit-form.css" rel="stylesheet">
@@ -91,6 +91,7 @@
         <div class="row mp-0">
             <div class="mx-auto my-4">
                 <button type="button" data-toggle="modal" data-target="#new-question-modal" class="btn btn-secondary">New Question</button>
+                <button id="undo" type="button" class="btn btn-secondary">Undo</button>
                 <button id="submit" type="button" class="btn btn-primary">Save Form</button>
                 <button id="cancel" type="button" data-toggle="modal" data-target="#confirm-cancel-modal" class="btn btn-danger">Cancel</button>
             </div>

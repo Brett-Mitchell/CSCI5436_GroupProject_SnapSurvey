@@ -31,31 +31,9 @@ public class SurveyFormQuestion implements Table {
 	
 	public SurveyFormQuestion() {}
 	
-	/*public SurveyFormQuestion(int id, int form, String text) {
-		this._id = id;
-		this.form = form;
-		this.text = text;
-	}
-
-	public SurveyFormQuestion(int form, String text) {
-		this.form = form;
-		this.text = text;
-	}
-
-	public SurveyFormQuestion(int id, SurveyForm form, String text) {
-		this._id = id;
-		this.form = form.getId();
-		this.text = text;
-	}
-
-	public SurveyFormQuestion(SurveyForm form, String text) {
-		this.form = form.getId();
-		this.text = text;
-	}*/
-	
 	public void create() {
-		String q = "INSERT INTO survey_form_questions (form, `text`) "
-				 + "VALUES (" + this.form + ", '" + this.text + "');";
+		String q = "INSERT INTO survey_form_questions (form, `type`, `text`) "
+				 + "VALUES (" + this.form + ", '" + this.type + "', '" + this.text + "');";
 		
 		try {
 			DB.execNonQuery(q);
@@ -66,7 +44,7 @@ public class SurveyFormQuestion implements Table {
 	
 	public void update() {
 		String q = "UPDATE survey_form_questions "
-				 + "SET form=" + this.form + ", `text`='" + this.text + "' "
+				 + "SET form=" + this.form + ", `text`='" + this.text + "', `type`='" + this.type + "' "
 		 		 + "WHERE id=" + this._id + ";";
 		
 		try {

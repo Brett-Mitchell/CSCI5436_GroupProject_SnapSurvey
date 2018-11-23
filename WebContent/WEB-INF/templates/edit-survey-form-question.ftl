@@ -12,7 +12,10 @@
                 <div id="question-${q.id}-choices" class="choices-column form-group p-1">
                     <#list q.choices as c>
                         <div id='question-${q.id}-choice-${c.id}' class="choice mb-1">
-                            <input class="form-control my-auto" type="text" value="${c.text}" />
+                            <input id="question-${q.id}-choice-${c.id}-text"
+                                   class="form-control my-auto"
+                                   type="text"
+                                   value="${c.text}" />
                             <button type="button"
                                     id="question-${q.id}-choice-${c.id}-delete"
                                     class="btn btn-secondary m-2 my-auto h-80">
@@ -20,7 +23,7 @@
                             </button>
                         </div>
                     </#list>
-                    <div class="row">
+                    <div id="question-${q.id}-new-choice-row" class="row">
                         <button id="question-${q.id}-new-choice"
                                 type="button"
                                 class="btn btn-primary mx-auto new-choice-button">

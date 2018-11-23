@@ -28,12 +28,13 @@ public class AddSurveyFormQuestionEndpoint extends Endpoint {
 	public String getApiResponse(HttpServletRequest req, HttpServletResponse res) {
 		int formId = Integer.parseInt(req.getParameter("formId"));
 		String text = req.getParameter("text");
-		//String type = req.getParameter("type");
+		String type = req.getParameter("type");
 		
 		SurveyFormQuestion q = new SurveyFormQuestion();
 		
 		q.set("text", text);
 		q.set("form", formId);
+		q.set("type", type);
 		
 		q.create();
 		
