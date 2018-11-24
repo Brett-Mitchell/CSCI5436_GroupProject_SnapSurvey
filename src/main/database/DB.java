@@ -14,6 +14,8 @@ public class DB {
 	private static String password = "root";
 	private static String connString = "jdbc:mysql://localhost:3306/snapsurvey?useSSL=false";
 	
+	private static Connection conn;
+	
 	static {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -31,7 +33,7 @@ public class DB {
 	public static ResultSet execQuery(String query) throws SQLException {
 		ResultSet rs;
 		
-		Connection c = getConnection();
+		Connection c = conn == null ? getConnection() : conn;
 		Statement s = c.createStatement();
 		
 		rs = s.executeQuery(query);
@@ -40,9 +42,22 @@ public class DB {
 	}
 	
 	public static void execNonQuery(String query) throws SQLException {
-		Connection c = getConnection();
+		Connection c = conn == null ? getConnection() : conn;
 		Statement s = c.createStatement();
 		
 		s.execute(query);
+		
+		if (conn == null)
+			c.close();
 	}
+	
+	public static void beginPersistantConnection() throws SQLException {
+		conn = getConnection();
+	}
+	
+	public static void terminatePersistantConnection() throws SQLException {
+		conn.close();
+		conn = null;
+	}
+	
 }

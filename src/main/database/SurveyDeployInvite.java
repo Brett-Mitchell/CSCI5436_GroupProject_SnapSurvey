@@ -36,7 +36,9 @@ public class SurveyDeployInvite implements Table {
 		
 		try {
 			DB.execNonQuery(q);
-		} catch(SQLException e) {}
+		} catch(SQLException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	@Override

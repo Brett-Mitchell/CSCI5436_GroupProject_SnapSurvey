@@ -79,6 +79,24 @@
         </div>
     </div>
 
+    <!-- Deploy modal -->
+    <div id="deploy-modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Deploy</h4>
+                </div>
+                <div class="form-group p-2">
+                    <textarea id="email-invite-input" class="form-control w-100" rows="8" ></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirm-deploy" type="button" class="btn btn-secondary">Deploy</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main content. Contains a list of question forms -->
     <div class="content-wrapper">
         <div id="question-list" class="p-1">
@@ -91,6 +109,7 @@
         
         <div class="row mp-0">
             <div class="mx-auto my-4">
+                <button id="deploy" type="button" data-toggle="modal" data-target="#deploy-modal" class="btn btn-success">Deploy</button>
                 <button type="button" data-toggle="modal" data-target="#new-question-modal" class="btn btn-secondary">New Question</button>
                 <button id="undo" type="button" class="btn btn-secondary">Undo</button>
                 <button id="submit" type="button" class="btn btn-primary">Save Form</button>

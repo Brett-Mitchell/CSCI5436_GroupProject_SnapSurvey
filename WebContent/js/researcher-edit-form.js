@@ -98,10 +98,41 @@ function back() {
     window.location.href = '/content/r/dashboard';
 }
 
+// Undo a single action
 function undo() {
     if (!actions.length) return;
     var a = actions.pop();
     a.revert();
+}
+
+// Deploys the current survey
+function deploy() {
+    var emails = $('#email-invite-input').val();
+    // Remove any whitespace surrounding the list of emails
+    emails = emails.split(',')
+                   .map(function(email) { return email.trim(); });
+    console.log(emails);
+    $.ajax({
+        url: '/api/deploy-survey-form',
+        method: 'POST',
+        data: {
+            formId: formId,
+            emails: JSON.stringify(emails)
+        }
+    })
+    .done(function(data) {
+        var parsed = JSON.parse(data);
+        if (!parsed.success) {
+            alert('Failed to deploy survey');
+        }
+        else {
+            alert('Survey deployed');
+        }
+    })
+    .fail(function(err) {
+        console.error(err);
+        alert('Failed to deploy survey');
+    });
 }
 
 // Deletes a question
@@ -573,7 +604,9 @@ $(document).ready(function() {
             })(q.id));
     }
 
-    // Add navigation callbacks
+    $('#confirm-deploy').click(deploy);
+
+    // Add button callbacks
     $('#undo').click(undo);
     $('#back').click(back);
     $('#submit').click(submit);

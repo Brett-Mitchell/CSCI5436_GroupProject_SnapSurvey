@@ -32,6 +32,7 @@ public class ApiServlet extends HttpServlet {
 		endpoints.put("/login", new LoginEndpoint());
 		endpoints.put("/add-survey-form", new AddSurveyFormEndpoint());
 		endpoints.put("/delete-survey-form", new DeleteSurveyFormEndpoint());
+		endpoints.put("/deploy-survey-form", new DeploySurveyFormEndpoint());
 		endpoints.put("/add-survey-form-question", new AddSurveyFormQuestionEndpoint());
 		endpoints.put("/update-survey-form-question", new UpdateSurveyFormQuestionEndpoint());
 		endpoints.put("/delete-survey-form-question", new DeleteSurveyFormQuestionEndpoint());

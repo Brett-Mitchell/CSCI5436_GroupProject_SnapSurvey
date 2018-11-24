@@ -1,5 +1,6 @@
 package main.database;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -8,7 +9,7 @@ public class SurveyDeploy implements Table {
 
 	protected int id = -1;
 	protected int survey_form;
-	protected boolean ended;
+	protected boolean ended = false;
 	protected Timestamp start;
 	protected Timestamp end;
 	
@@ -47,13 +48,13 @@ public class SurveyDeploy implements Table {
 
 	@Override
 	public void create() {
-		String q = "INSERT INTO survey_deploys (survey_form, start";
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
+		String q = "INSERT INTO survey_deploys (survey_form, ended, start";
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		if (this.end != null)
 			q += ", end";
 		
-		q += ") VALUES (" + this.id + ", '" + formatter.format(this.start) + "'";
+		q += ") VALUES (" + this.survey_form + ", " + (this.ended ? 1 : 0) + ", '" + formatter.format(this.start) + "'";
 		
 		if (this.end != null)
 			q += ", '" + formatter.format(this.end) + "'";
@@ -61,8 +62,19 @@ public class SurveyDeploy implements Table {
 		q += ");";
 		
 		try {
+			
+			DB.beginPersistantConnection();
+			
 			DB.execNonQuery(q);
-		} catch(SQLException e) {}
+			ResultSet idSet = DB.execQuery("SELECT LAST_INSERT_ID();");
+			idSet.next();
+			this.set("id", idSet.getInt(1));
+			
+			DB.terminatePersistantConnection();
+			
+		} catch(SQLException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	@Override
