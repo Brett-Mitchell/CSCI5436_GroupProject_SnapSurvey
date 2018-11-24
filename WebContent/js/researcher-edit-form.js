@@ -1,8 +1,10 @@
 var textAreaHeight;
+// Store a chain of atomic, reversible actions
 var actions = [];
 var lastAddedQuestion = -1;
 var actionCounter = 0;
 
+// Clear the data in the new question modal when it closes
 function clearModal() {
     var textArea = $('#new-question-textarea');
     textArea.val('');
@@ -22,7 +24,7 @@ function squashActions() {
         while (i < actions.length) {
             var a = actions[i];
             if (a.target_type === first.target_type &&
-                a.target      === first.target      )
+                a.target      === first.target        )
             {
                 actionSequence.push(actions.splice(i, 1)[0]);
             } else {
@@ -35,15 +37,17 @@ function squashActions() {
         // kept.
         var last = actionSequence[actionSequence.length - 1];
 
-        if (first.type === 'create') {
+        if (first.type === 'add') {
             // If an object is created and then deleted, the result is a no-op
             if (last.type === 'delete') {
                 continue;
             // The most recent update will contain the most up-to-date content,
             // but a newly created item will not yet exist in the database, so
             // the data from the update event is used in the add action
-            } else if (last.type === 'update') {
-                first.parameters.data = last.parameters.data;
+            } else {
+                if (last.type === 'update')
+                    first.parameters.data = last.parameters.data;
+                    
                 squashedActions.push(first);
             }
         // If the actions in actionSequence pertain to a pre-existing item, only
@@ -92,6 +96,12 @@ function submitCancellation() {
 // Navigates back to the researcher's dashboard
 function back() {
     window.location.href = '/content/r/dashboard';
+}
+
+function undo() {
+    if (!actions.length) return;
+    var a = actions.pop();
+    a.revert();
 }
 
 // Deletes a question
@@ -172,7 +182,7 @@ function addQuestion() {
     $('#question-list').append(newQuestion);
 
     $('#question-text-new-' + actionId).blur((function(_id) {
-        return function(focusEvent) { updateQuestion(_id, focusEvent.target.value); };
+        return function(focusEvent) { updateQuestionText(_id, focusEvent.target.value); };
     })('new-' + actionId));
     $('#question-delete-button-new-' + actionId).click((function(_id) {
         return function() { deleteQuestion(_id); };
@@ -210,7 +220,7 @@ function addQuestion() {
 }
 
 // Updates a question
-function updateQuestion(id, text) {
+function updateQuestionText(id, text) {
     if ($('#question-text-' + id).data('previous_value') === text) return;
 
     var actionId = actionCounter++;
@@ -234,6 +244,7 @@ function updateQuestion(id, text) {
             }
     
             qText.val(qText.data('initial_value'));
+            qText.data('previous_value', qText.data('initial_value'));
         };
     })(id, actionId);
 
@@ -250,7 +261,8 @@ function updateQuestion(id, text) {
             data: {
                 formId: formId,
                 text: text,
-                questionId: id
+                questionId: id,
+                type: $('#question-' + id + '-type-picker').selectpicker('val')
             }
         },
         onDone: function(data) {
@@ -258,7 +270,7 @@ function updateQuestion(id, text) {
                 revert();
         },
         onFail: function(err) {
-            console.log(err);
+            console.error(err);
             revert();
         },
         revert: revert
@@ -292,23 +304,73 @@ function deleteChoice(question, choice) {
                 revert();
         },
         onFail: function(err) {
-            console.log(err);
+            console.error(err);
             revert();
         },
         revert: revert
     });
 }
 
-function updateChoice(question, choice, text) {
-    console.log('updating choice');
+function updateChoice(qId, cId, text) {
+    var cText = $('#question-' + qId + '-choice-' + cId + '-text');
+    if (cText.data('previous_value') === text) return;
+
+    var actionId = actionCounter++;
+
+    var revert = (function(_qId, _cId, _actionId) {
+        return function() {
+            var cText = $('#question-' + _qId + '-choice-' + _cId + '-text');
+            // First look for a preceding update or add action to set the text to
+            for (var i = actions.length - 1; i >= 0; i--) {
+                var a = actions[i];
+                if (['update', 'add'].includes(a.type)  &&
+                    a.target_type === 'choice'          &&
+                    a.target      ===  _qId + '.' + cId &&
+                    a.id          !==  _actionId          ) {
+                    
+                    cText.val(a.parameters.data.text);
+                    cText.data('previous_value', a.parameters.data.text);
+                    return;
+                }
+            }
+            
+            cText.val(cText.data('initial_value'));
+
+        };
+    })(qId, cId, actionId);
+
+    actions.push({
+        id: actionId,
+        type: 'update',
+        target_type: 'choice',
+        target: qId + '.' + cId,
+        parameters: {
+            url: '/api/update-survey-form-question-choice',
+            method: 'POST',
+            data: {
+                questionId: qId,
+                choiceId: cId,
+                text: text
+            }
+        },
+        onDone: function(data) {
+            if (!JSON.parse(data).success)
+                revert();
+        },
+        onFail: function(err) {
+            console.error(err);
+            revert();
+        },
+        revert: revert
+    });
 }
 
 function newChoiceHTML(qId, cId) {
     var templateString = 
 '<div id="question-' + qId + '-choice-' + cId + '" class="choice mb-1">' + 
-    '<input class="form-control my-auto" type="text" value="" />' + 
+    '<input id="question-' + qId + '-choice-' + cId + '-text" class="form-control my-auto" type="text" value="" />' + 
     '<button type="button"' + 
-        'id="question-' + qId + '-choice-' + cId + '-delete"' + 
+        'id="question-' + qId + '-choice-new-' + cId + '-delete"' + 
         'class="btn btn-secondary m-2 my-auto h-80">' + 
     'Delete' + 
     '</button>' + 
@@ -332,6 +394,14 @@ function addChoice(question) {
     var newChoice = newChoiceHTML(qId, cId);
     newChoice.insertBefore('#question-' + qId + '-new-choice-row');
 
+    $('#question-' + qId + '-choice-' + cId + '-text').blur((function(_qId, _cId) {
+        return function(focusEvent) { updateChoice(_qId, _cId, focusEvent.target.value); };
+    })(qId, cId));
+
+    $('#question-' + qId + '-choice-' + cId + '-delete').click((function(_qId, _cId) {
+        return function() { deleteChoice(_qId, _cId); };
+    })(qId, cId));
+
     function revert() {
         $('#question-' + qId + '-choice-' + cId).hide();
     }
@@ -354,17 +424,71 @@ function addChoice(question) {
                 revert();
         },
         onFail: function(err) {
-            console.log(err);
+            console.error(err);
             revert();
         },
         revert: revert
     });
 }
 
-function undo() {
-    if (!actions.length) return;
-    var a = actions.pop();
-    a.revert();
+// Records a change of question type and displays the appropriate options
+function updateQuestionType(qId, newType, previousType) {
+    if (previousType === newType) return;
+
+    var choices = $('#question-' + qId + '-choices');
+
+    if (['multiple_choice', 'radio_select'].includes(newType)) {
+        choices.show();
+    } else {
+        choices.hide();
+    }
+
+    questions[qId.toString()].type = newType;
+
+    function revert() {
+        if (['multiple_choice', 'radio_select'].includes(previousType)) {
+            choices.show();
+        } else {
+            choices.hide();
+        }
+
+
+        // Suspend change event while 
+        var picker = $('#question-' + qId + '-type-picker');
+        picker.off('changed.bs.select');
+        picker.selectpicker('val', previousType);
+        picker.on('changed.bs.select', function(event, a, b, previousValue) 
+            { updateQuestionType(qId, event.target.value, previousValue); }
+        );
+
+        questions[qId.toString()].type = previousType;
+    }
+
+    actions.push({
+        id: actionCounter++,
+        type: 'update',
+        target_type: 'question',
+        target: qId,
+        parameters: {
+            url: '/api/update-survey-form-question',
+            method: 'POST',
+            data: {
+                formId: formId,
+                questionId: qId,
+                text: $('#question-text-' + qId).val(),
+                type: newType
+            }
+        },
+        onDone: function(data) {
+            if (!JSON.parse(data).success)
+                revert();
+        },
+        onFail: function(err) {
+            console.error(err);
+            revert();
+        },
+        revert: revert
+    })
 }
 
 // Sets up event listeners and prepares the new question modal to clear and
@@ -398,30 +522,43 @@ $(document).ready(function() {
 
         // Call updateQuestion when a question's textarea loses focus
         qText.on('blur', (function(_i) {
-            return function(focusEvent) { updateQuestion(_i, focusEvent.target.value); };
+            return function(focusEvent) { updateQuestionText(_i, focusEvent.target.value); };
         })(q.id));
 
         // Record the initial text value for reverting update actions
         qText.data('initial_value', qText.val());
         qText.data('previous_value', qText.val());
 
+        var selectPicker = $('#question-' + q.id + '-type-picker');
+
+        // Set the default value for question type select picker
+        selectPicker.selectpicker('val', q.type);
+
+        selectPicker.on('changed.bs.select', (function(_qId) {
+            return function(event, a, b, previousValue) { updateQuestionType(_qId, event.target.value, previousValue); };
+        })(q.id));
+
+        if (['multiple_choice', 'radio_select'].includes(q.type)) {
+            $('#question-' + q.id + '-choices').show();
+        } else {
+            $('#question-' + q.id + '-choices').hide();
+        }
+
         // Call deleteQuestion when a question's delete button is clicked
         $('#question-delete-button-' + q.id).click((function(_i) {
             return function() { deleteQuestion(_i); };
         })(i));
         
-        // Add delete click events to any existing multiple choice options
         for (var c in q.choices) {
+            // Add delete click events to any existing multiple choice options
             $('#question-' + q.id + '-choice-' + q.choices[c] + '-delete').click((function(qId, cId) {
                 return function() { deleteChoice(qId, cId); };
             })(q.id, q.choices[c]));
 
-            var cText = $('question-' + q.id + '-choice-' + q.choices[c] + '-text');
+            // Add a blur callback to update choices
+            var cText = $('#question-' + q.id + '-choice-' + q.choices[c] + '-text');
             cText.blur((function(_q, _c) {
-                return function(focusEvent) {
-                    console.log('in callback');
-                    updateChoice(_q, _c, focusEvent.target.value);
-                };
+                return function(focusEvent) { updateChoice(_q, _c, focusEvent.target.value); };
             })(q.id, q.choices[c]));
             cText.data('initial_value', cText.val());
             cText.data('previous_value', cText.val());

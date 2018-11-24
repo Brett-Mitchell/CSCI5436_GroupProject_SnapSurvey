@@ -62,12 +62,8 @@ public class SurveyFormQuestionChoice implements Table {
 	}
 	
 	public void delete() {
-		String q = "DELETE FROM survey_form_question_choices ";
-		
-		if (this._id != -1)
-			q += "WHERE id=" + this._id + ";";
-		else
-			q += "WHERE question=" + this._question + " AND `text`='" + this.text + "';";
+		String q = "DELETE FROM survey_form_question_choices "
+				 + "WHERE id=" + this._id + " AND question=" + this._question + ";";
 		
 		try {
 			DB.execNonQuery(q);

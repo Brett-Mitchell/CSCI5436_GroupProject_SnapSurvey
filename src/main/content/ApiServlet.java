@@ -30,9 +30,13 @@ public class ApiServlet extends HttpServlet {
 	{
 		//   	 .put("mapped-url", new Endpoint() { /* Implement getApiResponse */ })
 		endpoints.put("/login", new LoginEndpoint());
+		endpoints.put("/add-survey-form", new AddSurveyFormEndpoint());
+		endpoints.put("/delete-survey-form", new DeleteSurveyFormEndpoint());
 		endpoints.put("/add-survey-form-question", new AddSurveyFormQuestionEndpoint());
 		endpoints.put("/update-survey-form-question", new UpdateSurveyFormQuestionEndpoint());
 		endpoints.put("/delete-survey-form-question", new DeleteSurveyFormQuestionEndpoint());
+		endpoints.put("/add-survey-form-question-choice", new AddSurveyFormQuestionChoiceEndpoint());
+		endpoints.put("/update-survey-form-question-choice", new UpdateSurveyFormQuestionChoiceEndpoint());
 		endpoints.put("/delete-survey-form-question-choice", new DeleteSurveyFormQuestionChoiceEndpoint());
 	}
     
@@ -45,7 +49,7 @@ public class ApiServlet extends HttpServlet {
 		Endpoint endpoint = endpoints.get(url);
 		
 		if (endpoint == null) {
-			response.getWriter().write("{\"success\": false}");
+			response.getWriter().write("{\"success\": false, \"message\": \"No endpoint found at: " + url + "\"}");
 			return;
 		}
 		

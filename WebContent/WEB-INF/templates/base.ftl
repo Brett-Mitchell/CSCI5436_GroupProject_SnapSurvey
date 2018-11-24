@@ -39,10 +39,18 @@
     <html id="root">
         <head>
             <meta charset="UTF-8"> 
+
+            <!-- JQuery CDN -->
             <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+            <!-- Bootstrap CDN -->
         	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
             <link rel="stylesheet" href="/css/base.css">
         	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.js"></script>
+            
+            <!-- Bootstrap Select library CDN -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/css/bootstrap-select.min.css">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/js/bootstrap-select.min.js"></script>
             <@head/>
         </head>
 

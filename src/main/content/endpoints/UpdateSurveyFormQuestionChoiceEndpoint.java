@@ -7,42 +7,48 @@ import main.content.authorizers.SpecificUserAuthorizer;
 import main.database.SurveyForm;
 import main.database.SurveyFormQuestionChoice;
 
-public class DeleteSurveyFormQuestionChoiceEndpoint extends Endpoint {
+public class UpdateSurveyFormQuestionChoiceEndpoint extends Endpoint {
 
-	public DeleteSurveyFormQuestionChoiceEndpoint() {
+	public UpdateSurveyFormQuestionChoiceEndpoint() {
 		super(new SpecificUserAuthorizer());
 	}
 	
 	@Override
-	protected void preAuthorize(HttpServletRequest request) {
-		String qId = request.getParameter("questionId");
+	protected void preAuthorize(HttpServletRequest req) {
+		String qId = req.getParameter("questionId");
 		
 		SurveyForm sf = SurveyForm.SELECT()
-								  .joinOn("survey_form_questions", new String[] {"survey_forms.id", "survey_form_questions.form"})
+								  .joinOn("survey_form_questions", new String[] {"survey_form_questions.form", "survey_forms.id"})
 								  .where("survey_form_questions", "id", qId)
 								  .getFirst();
 		
 		((SpecificUserAuthorizer)this.authorizer).setUserId(sf.getResearcher());
 	}
-
+	
 	@Override
 	public String getApiResponse(HttpServletRequest req, HttpServletResponse res) {
-		String cId = req.getParameter("choiceId");
 		String qId = req.getParameter("questionId");
-		System.out.println("deleting choice " + cId + " from question " + qId);
-		if (cId == null || qId == null)
+		String cId = req.getParameter("choiceId");
+		String text = req.getParameter("text");
+		
+		if (qId  == null ||
+			cId  == null ||
+			text == null   )
+			
 			return "{\"success\": false}";
 		
 		SurveyFormQuestionChoice c = SurveyFormQuestionChoice.SELECT()
-															 .where("id", cId)
 															 .where("question", qId)
+															 .where("id", "cId")
 															 .getFirst();
 		
-		if (c != null) {
-			c.delete();
-			return "{\"success\": true}";
-		}
-
+		if (c == null)
+			return "{\"success\": false}";
+		
+		c.set("text", text);
+		
+		c.update();
+		
 		return "{\"success\": false}";
 	}
 

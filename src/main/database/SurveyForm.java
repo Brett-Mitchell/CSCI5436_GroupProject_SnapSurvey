@@ -39,6 +39,13 @@ public class SurveyForm implements Table {
 		
 		try {
 			DB.execNonQuery(q);
+			
+			SurveyForm sf = SELECT().where("researcher", Integer.toString(this._researcher))
+									.where("title", this.title)
+									.getFirst();
+			
+			this._id = sf._id;
+			
 		} catch(SQLException e) {}
 	}
 	
@@ -62,7 +69,9 @@ public class SurveyForm implements Table {
 		
 		try {
 			DB.execNonQuery(q);
-		} catch(SQLException e) {}
+		} catch(SQLException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	@Override

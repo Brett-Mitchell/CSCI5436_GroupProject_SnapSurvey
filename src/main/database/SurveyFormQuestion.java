@@ -44,12 +44,14 @@ public class SurveyFormQuestion implements Table {
 	
 	public void update() {
 		String q = "UPDATE survey_form_questions "
-				 + "SET form=" + this.form + ", `text`='" + this.text + "', `type`='" + this.type + "' "
-		 		 + "WHERE id=" + this._id + ";";
+				 + "SET `text`='" + this.text + "', `type`='" + this.type + "' "
+		 		 + "WHERE id=" + this._id + " AND form=" + this.form + ";";
 		
 		try {
 			DB.execNonQuery(q);
-		} catch(SQLException e) {}
+		} catch(SQLException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	public void delete() {

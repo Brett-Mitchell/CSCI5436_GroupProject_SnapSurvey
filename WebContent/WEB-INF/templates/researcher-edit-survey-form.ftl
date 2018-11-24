@@ -9,6 +9,7 @@
         <#list survey_form.questions as q>
             '${i}': {
                 id: ${q.id},
+                type: '${q.type}',
                 choices: [
                     <#list q.choices as c>
                     ${c.id},
@@ -47,11 +48,11 @@
                             id="new-question-textarea"
                             class="form-control mb-1 w-100"
                         ></textarea>
-                        <select class="form-control" id="new-question-type-select">
-                            <option>Text</option>
-                            <option>Multiple answer</option>
-                            <option>Radio select</option>
-                            <option>Number</option>
+                        <select class="selectpicker w-100" id="new-question-type-select">
+                            <option value="text">Text</option>
+                            <option value="multiple_choice">Multiple answer</option>
+                            <option value="radio_select">Radio select</option>
+                            <option value="number">Number</option>
                         </select>
                     </div>
                 </div>

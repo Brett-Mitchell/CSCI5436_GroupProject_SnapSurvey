@@ -5,11 +5,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import main.content.authorizers.SpecificUserAuthorizer;
 import main.database.SurveyForm;
-import main.database.SurveyFormQuestion;
 
-public class UpdateSurveyFormQuestionEndpoint extends Endpoint {
+public class DeleteSurveyFormEndpoint extends Endpoint {
 	
-	public UpdateSurveyFormQuestionEndpoint() {
+	public DeleteSurveyFormEndpoint() {
 		super(new SpecificUserAuthorizer());
 	}
 	
@@ -17,38 +16,31 @@ public class UpdateSurveyFormQuestionEndpoint extends Endpoint {
 	protected void preAuthorize(HttpServletRequest req) {
 		String formId = req.getParameter("formId");
 		
+		if (formId == null) {
+			((SpecificUserAuthorizer)this.authorizer).setUserId(-1);
+			return;
+		}
+		
 		SurveyForm sf = SurveyForm.SELECT().where("id", formId).getFirst();
 		
+		if (sf == null) {
+			((SpecificUserAuthorizer)this.authorizer).setUserId(-1);
+			return;
+		}
+
 		((SpecificUserAuthorizer)this.authorizer).setUserId(sf.getResearcher());
 	}
 
 	@Override
 	public String getApiResponse(HttpServletRequest req, HttpServletResponse res) {
 		String formId = req.getParameter("formId");
-		String questionId = req.getParameter("questionId");
-		String text = req.getParameter("text");
-		String type = req.getParameter("type");
 		
-		System.out.println(type);
-		
-		if (formId     == null ||
-			questionId == null ||
-			text 	   == null ||
-			type	   == null   )
+		if (formId == null)
 			return "{\"success\": false}";
 		
-		SurveyFormQuestion q = SurveyFormQuestion.SELECT()
-												 .where("id", questionId)
-												 .where("form", formId)
-												 .getFirst();
+		SurveyForm sf = SurveyForm.SELECT().where("id", formId).getFirst();
 		
-		if (q == null)
-			return "{\"success\": false}";
-		
-		q.set("text", text);
-		q.set("type", type);
-		
-		q.update();
+		sf.delete();
 		
 		return "{\"success\": true}";
 	}

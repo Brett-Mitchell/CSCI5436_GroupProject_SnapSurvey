@@ -134,7 +134,7 @@ CREATE TABLE survey_response_values (
     UNIQUE  KEY (id, question, survey_response),
     FOREIGN KEY (question) REFERENCES survey_form_questions(id) ON DELETE CASCADE,
     FOREIGN KEY (survey_response) REFERENCES survey_responses(id) ON DELETE CASCADE
-);
+) ENGINE=MyISAM;
 
 -- survey_response_text_values are bodies of text in response to a textual
 -- response question.
@@ -144,7 +144,7 @@ CREATE TABLE survey_response_text_values (
 
     PRIMARY KEY (id),
     FOREIGN KEY (id) REFERENCES survey_response_values(id) ON DELETE CASCADE
-);
+) ENGINE=MyISAM;
 
 -- survey_response_choice_values represent the selections made by the user on
 -- questions with predefined choices. Each user is allow to submit multiple
@@ -292,26 +292,7 @@ VALUES
 ('Survey 7', 1),
 ('Survey 8', 1),
 ('Survey 9', 1),
-('Survey 10', 1),
-('Survey a', 1),
-('Survey b', 1),
-('Survey c', 1),
-('Survey d', 1),
-('Survey e', 1),
-('Survey f', 1),
-('Survey g', 1),
-('Survey h', 1),
-('Survey i', 1),
-('Survey j', 1),
-('Survey k', 1),
-('Survey l', 1),
-('Survey m', 1),
-('Survey n', 1),
-('Survey o', 1),
-('Survey p', 1),
-('Survey q', 1),
-('Survey r', 1),
-('Survey s', 1);
+('Survey 10', 1);
 
 INSERT INTO survey_form_questions (form, `type`, `text`)
 VALUES
