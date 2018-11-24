@@ -22,22 +22,29 @@
     flex-direction: row;
 }
 
-.survey-forms-card {
+.dashboard-card {
     height: 2.5rem;
-    width: calc(100% - 6rem);
     min-height: 2.5rem;
     padding: 0;
 }
 
-.survey-forms-card:hover {
+.dashboard-card:hover {
     background-color: #EDF7FA;
 }
 
-.survey-forms-card:active {
+.dashboard-card:active {
     background-color: #E9EEF0;
     height: 2.4rem;
     margin-top: 0.05rem;
     margin-bottom: 0.05rem;
+}
+
+.deploy-card {
+    width: 100%;
+}
+
+.survey-forms-card {
+    width: calc(100% - 6rem);
 }
 
 .survey-form-delete-button {

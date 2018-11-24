@@ -61,7 +61,7 @@ function createSurvey(title) {
                 title: title
             };
             $('#survey-forms-column').prepend(newSurveyHTML(title, parsed.id));
-            $('#survey-form-' + parsed.id).click(goToEditSurvey(parsed.id));
+            $('#survey-form-' + parsed.id).click(goToEditSurvey(surveys[parsed.id.toString()]));
             $('#survey-' + parsed.id + '-delete').click(deleteSurvey(surveys[parsed.id.toString()]));
         }
     })
@@ -83,8 +83,10 @@ function performDeleteSurvey(form) {
         var parsed = JSON.parse(data);
         if (!parsed.success)
             alert('Could not delete survey ' + form.title);
-        else
+        else {
             $('#survey-form-' + form.id + '-wrapper').remove();
+            $('.deploy-for-' + form.id).remove();
+        }
     })
     .fail(function(err) {
         console.error(err);
@@ -103,7 +105,21 @@ function deleteSurvey(form) {
     };
 }
 
+function findSurvey(id) {
+    for (var k in surveys) 
+        if (surveys[k].id == id) return surveys[k];
+}
+
 window.onload = function() {
+
+    // Force the browser to hard reload when navigating to the dashboard with
+    // the browser's buttons
+    $(window).bind("pageshow", function(event) {
+        if (event.originalEvent.persisted) {
+            window.location.reload(); 
+        }
+    });
+
     $('#new-survey-form-modal').on('hidden.bs.modal', clearModal);
     $('#confirm-create-survey-form').click(function() {
         createSurvey($('#new-survey-title').val());
@@ -111,17 +127,19 @@ window.onload = function() {
     });
 
     $('#survey-forms-tab').css('display', 'flex');
-    $('#current-surveys-tab').css('display', 'none');
-    $('#past-surveys-tab').css('display', 'none');
+    $('#deploys-tab').css('display', 'none');
     $('#show-survey-forms-button').click(openTab('survey-forms-tab'));
-    $('#show-current-surveys-button').click(openTab('current-surveys-tab'));
-    $('#show-past-surveys-button').click(openTab('past-surveys-tab'));
+    $('#show-deploys-button').click(openTab('deploys-tab'));
 
     for (var i in surveys) {
         $('#survey-form-' + surveys[i.toString()].id).click(goToEditSurvey(surveys[i.toString()]));
         $('#survey-' + surveys[i.toString()].id + '-delete').click(deleteSurvey(surveys[i.toString()]));
     }
     
-    for (i in survey_deploys)
-        $('#current-deploy-' + i).click(goToViewSurvey(survey_deploys[i.toString()]));
+    for (i in current_survey_deploys) {
+        var d = current_survey_deploys[i.toString()];
+        $('#deploy-' + d.id).click(goToViewSurvey(d.id));
+        var form = findSurvey(d.form);
+        $('#deploy-' + d.id + '-title').text(form.title + ' - Deploy #' + d.id);
+    }
 };

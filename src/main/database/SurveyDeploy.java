@@ -96,14 +96,12 @@ public class SurveyDeploy implements Table {
 
 	@Override
 	public void delete() {
-		if (this.id != -1) {
-			String q = "DELETE FROM survey_deploys "
-					 + "WHERE id=" + this.id + ";";
-			
-			try {
-				DB.execNonQuery(q);
-			} catch(SQLException e) {}
-		} else { /* TODO: Handle delete when no id available */ }
+		String q = "DELETE FROM survey_deploys "
+				 + "WHERE id=" + this.id + " AND survey_form=" + this.survey_form + ";";
+		
+		try {
+			DB.execNonQuery(q);
+		} catch(SQLException e) {}
 	}
 
 }

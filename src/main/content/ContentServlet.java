@@ -25,6 +25,7 @@ import main.content.authorizers.ResearcherAuthorizer;
 import main.content.context.ContextBuilder;
 import main.content.context.ResearcherDashboardContextBuilder;
 import main.content.context.ResearcherEditSurveyFormContextBuilder;
+import main.content.context.TakeSurveyContextBuilder;
 
 /**
  * Servlet implementation class ContentServlet
@@ -92,13 +93,9 @@ public class ContentServlet extends HttpServlet {
 						return new HashMap<String, Object>();
 					}
 				}, new ParticipantAuthorizer()));
-		pages.put("/p/take-survey", new PageEntry(
-				"take-survey.ftl",
-				new ContextBuilder() {
-					public HashMap<String, Object> getContext(HttpServletRequest req) {
-						return new HashMap<String, Object>();
-					}
-				}, new ParticipantAuthorizer()));
+		pages.put("/p/take-survey", new PageEntry("take-survey.ftl",
+												  new TakeSurveyContextBuilder(),
+												  new ParticipantAuthorizer()));
 	}
 	
     public ContentServlet() {

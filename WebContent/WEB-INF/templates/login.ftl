@@ -1,7 +1,7 @@
 <#include "base.ftl"/>
 
 <#macro head>
-    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/login-register.css">
     <script src="/js/login.js"></script>
 </#macro>
 
@@ -15,7 +15,7 @@
     <form>
         <input id="username" class="mb-1 form-control" type="text" placeholder="Username">
         <input id="password" class="mb-1 form-control" type="password" placeholder="Password">
-        <button id="login-button" class="float-right btn btn-primary" type="button" id="submit">Login</button>
+        <button id="login-button" class="float-right btn btn-primary" type="button">Login</button>
     </form>
 </div>
 

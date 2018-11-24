@@ -111,7 +111,7 @@ function deploy() {
     // Remove any whitespace surrounding the list of emails
     emails = emails.split(',')
                    .map(function(email) { return email.trim(); });
-    console.log(emails);
+    
     $.ajax({
         url: '/api/deploy-survey-form',
         method: 'POST',
@@ -126,6 +126,7 @@ function deploy() {
             alert('Failed to deploy survey');
         }
         else {
+            $('#deploy-modal').modal('toggle');
             alert('Survey deployed');
         }
     })

@@ -13,34 +13,10 @@ public class SurveyFormQuestionChoice implements Table {
 	}
 	
 	public SurveyFormQuestionChoice() {}
-
-	/*public SurveyFormQuestionChoice(int id, int question, String text) {
-		this._id = id;
-		this._question = question;
-		this.text = text;
-	}
-
-	public SurveyFormQuestionChoice(int question, String text) {
-		this._question = question;
-		this.text = text;
-	}
-
-	public SurveyFormQuestionChoice(SurveyFormQuestion question, String text) {
-		this._question = question.getId();
-		this.text = text;
-	}*/
 	
-	public int getQuestion() {
-		return this._question;
-	}
-	
-	public String getText() {
-		return this.text;
-	}
-	
-	public int getId() {
-		return this._id;
-	}
+	public int getQuestion() { return this._question; }
+	public String getText() { return this.text; }
+	public int getId() { return this._id; }
 	
 	public void create() {
 		String q = "INSERT INTO survey_form_question_choices (question, text) "

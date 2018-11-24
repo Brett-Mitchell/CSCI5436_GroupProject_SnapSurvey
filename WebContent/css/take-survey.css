@@ -1,0 +1,55 @@
+
+.question-wrapper {
+    height: calc(100% - 3.5rem);
+    padding: 0.5rem;
+}
+
+.question-inner-wrapper {
+    height: 100%;
+    width: 100%;
+    padding: 0.5rem;
+}
+
+.question-input-wrapper {
+    height: 100%;
+}
+
+.questions-text-input {
+    width: 100%;
+}
+
+.question-text {
+    padding: 0.5rem;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+.checkbox-label {
+    margin: auto 0;
+}
+
+#button-row {
+    display: flex;
+    flex-direction: row;
+    height: 3.5rem;
+    padding: 0.5rem;
+}
+
+#previous {
+    margin-left: auto;
+    width: 8rem;
+}
+
+#submit {
+    margin: 0 0.5rem;
+    min-width: 6rem;
+    max-width: 12rem;
+}
+
+#next {
+    margin-right: auto;
+    width: 8rem;
+}

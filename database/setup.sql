@@ -81,7 +81,7 @@ CREATE TABLE survey_form_question_choices (
 ) ENGINE=MyISAM;
 
 -- Stores survey deployments. Can be restricted with a date range or be provided
--- with only a start date. 
+-- with only a start date.
 CREATE TABLE survey_deploys (
     id          INT NOT NULL AUTO_INCREMENT,
     survey_form INT NOT NULL,
@@ -89,9 +89,21 @@ CREATE TABLE survey_deploys (
     `start`     TIMESTAMP NOT NULL,
     `end`       TIMESTAMP NULL,
 
-    PRIMARY KEY (id),
+    PRIMARY KEY (survey_form, id),
     FOREIGN KEY (survey_form) REFERENCES survey_forms (id) ON DELETE CASCADE
-);
+) ENGINE=MyISAM;
+
+-- MyISAM does not support cascading deletes, so this must be emulated in a
+-- trigger
+DELIMITER //
+
+CREATE TRIGGER survey_deploys_survey_form_on_delete_cascade AFTER DELETE ON survey_forms
+FOR EACH ROW BEGIN
+    DELETE FROM survey_deploys
+    WHERE survey_deploys.survey_form = OLD.id;
+END//
+
+DELIMITER ;
 
 -- Associates survey deployments with an email. The association is linked only
 -- to email to facilitate invites to both anonymous and registered participants.
@@ -107,7 +119,7 @@ CREATE TABLE survey_deploy_invites (
     PRIMARY KEY (id),
     UNIQUE  KEY (survey_deploy, email),
     FOREIGN KEY (survey_deploy) REFERENCES survey_deploys (id) ON DELETE CASCADE
-);
+) ENGINE=MyISAM;
 
 -- survey_responses records the value of submitted responses. The submitting
 -- participant and the related survey form are recorded. Only one response per
@@ -121,7 +133,7 @@ CREATE TABLE survey_responses (
     UNIQUE  KEY (survey_form, invite),
     FOREIGN KEY (survey_form) REFERENCES survey_forms (id) ON DELETE CASCADE,
     FOREIGN KEY (invite) REFERENCES survey_deploy_invites (id) ON DELETE CASCADE
-);
+) ENGINE=MyISAM;
 
 -- survey_response_values acts as a base type for text values and choice values,
 -- providing unique ids for each response.

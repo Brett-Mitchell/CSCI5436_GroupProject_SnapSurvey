@@ -6,8 +6,9 @@ import java.sql.SQLException;
 public abstract class User implements Table {
 	
 	protected int id = -1;
-	public String username;
-	public String password;
+	protected String username;
+	protected String password;
+	protected String email;
 	
 	protected abstract int getUserType();
 	
@@ -47,12 +48,19 @@ public abstract class User implements Table {
 		case "username":
 			this.username = (String)value;
 			break;
+		case "password":
+			this.password = (String)value;
+			break;
+		case "email":
+			this.email = (String)value;
+			break;
 		}
 	}
 	
 	public void create() {
 		String q = "CALL new_user('" + username
 				 + "','" + password
+				 + "','" + email
 				 + "',"   + getUserType() + ");";
 		
 		try {
@@ -60,12 +68,12 @@ public abstract class User implements Table {
 			rs.next();
 			this.id = rs.getInt("id");
 		} catch (SQLException e) {
-			
+			System.out.println(e.getMessage());
 		}
 	}
 	
 	public void update() {
-		String q = "CALL update_user(" + id + ",'" + username + "','" + password + "');";
+		String q = "CALL update_user(" + id + ",'" + username + "','" + password + "', '" + email + "');";
 		
 		try {
 			DB.execQuery(q);

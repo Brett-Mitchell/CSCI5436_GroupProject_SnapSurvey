@@ -17,8 +17,14 @@ public class ResearcherDashboardContextBuilder extends ContextBuilder {
 		String researcherId = Integer.toString(session.user);
 		List<SurveyForm> surveyForms = SurveyForm.SELECT().where("researcher", researcherId)
 														  .get();
+		
+		String[] formIds = new String[surveyForms.size()];
+		
+		for (int i = 0; i < surveyForms.size(); i++)
+			formIds[i] = Integer.toString(surveyForms.get(i).getId());
+		
 		List<SurveyDeploy> currentSurveyDeploys = SurveyDeploy.SELECT()
-				  											  .where("ended", "0")
+				  											  .whereIn("survey_form", formIds)
 															  .get();
 		
 		HashMap<String, Object> context = new HashMap<String, Object>();

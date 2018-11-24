@@ -41,7 +41,7 @@ public class LoginEndpoint extends Endpoint {
 		}
 		
 		User user = userList.get(0);
-		user.password = password;
+		user.set("password", password);
 		if (user.authenticate()) {
 			// If the user has an expired session, delete that before creating the new session
 			List<UserSession> existingSessions = UserSession.SELECT().where("user", Integer.toString(user.getId())).get();

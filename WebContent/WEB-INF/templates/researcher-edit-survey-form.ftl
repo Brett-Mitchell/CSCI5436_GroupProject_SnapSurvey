@@ -87,6 +87,7 @@
                     <h4>Deploy</h4>
                 </div>
                 <div class="form-group p-2">
+                    <h6>List invitation emails seperated by commas</h6>
                     <textarea id="email-invite-input" class="form-control w-100" rows="8" ></textarea>
                 </div>
                 <div class="modal-footer">

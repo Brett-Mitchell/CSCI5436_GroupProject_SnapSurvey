@@ -12,7 +12,16 @@
                 <#assign i++>
             </#list>
         };
-        var survey_deploys = {};
+        var current_survey_deploys = {
+            <#assign i=1>
+            <#list current_survey_deploys as d>
+                '${i}': {
+                    id: ${d.id},
+                    form: '${d.surveyForm}'
+                },
+                <#assign i++>
+            </#list>
+        };
     </script>
     <script src="/js/researcher-dashboard.js"></script>
     <link href="/css/dashboard.css" rel="stylesheet">
@@ -71,8 +80,7 @@
     <div class="content-wrapper">
         <div class="btn-group w-100" id="nav-row">
             <button id="show-survey-forms-button" type="button" class="btn btn-light">Forms</button>
-            <button id="show-current-surveys-button" type="button" class="btn btn-light">Current Deployments</button>
-            <button id="show-past-surveys-button" type="button" class="btn btn-light">Past Deployments</button>
+            <button id="show-deploys-button" type="button" class="btn btn-light">Deployments</button>
         </div>
 
         <!-- Survey forms -->
@@ -80,7 +88,7 @@
             <div class="dashboard-item-column" id="survey-forms-column">
                 <#list survey_forms as survey>
                 <div id="survey-form-${survey.id}-wrapper" class="survey-forms-card-wrapper">
-                    <div class="foreground card survey-forms-card"
+                    <div class="foreground card dashboard-card survey-forms-card"
                          id="survey-form-${survey.id}">
                         <p class="my-auto mx-auto">${survey.title}</p>
                     </div>
@@ -106,21 +114,15 @@
             </div>
         </div>
 
-        <!-- Current surveys -->
-        <div id="current-surveys-tab" class="dashboard-item-column-wrapper">
-            <div class="dashboard-item-column" id="current-deploys-column">
+        <!-- Deploys -->
+        <div id="deploys-tab" class="dashboard-item-column-wrapper">
+            <div class="dashboard-item-column" id="deploys-column">
                 <#list current_survey_deploys as deploy>
-                    <div class="foreground card survey-forms-card"
-                         id="current-deploy-${deploy.id}">
-                        <p class="my-auto mx-auto">${deploy.surveyForm}</p>
+                    <div class="foreground card dashboard-card deploy-card deploy-for-${deploy.surveyForm}"
+                         id="deploy-${deploy.id}">
+                        <p id="deploy-${deploy.id}-title" class="my-auto mx-auto"></p>
                     </div>
                 </#list>
-            </div>
-        </div>
-        
-        <!-- Past surveys -->
-        <div id="past-surveys-tab" class="dashboard-item-column-wrapper">
-            <div class="dashboard-item-column">
             </div>
         </div>
     </div>
