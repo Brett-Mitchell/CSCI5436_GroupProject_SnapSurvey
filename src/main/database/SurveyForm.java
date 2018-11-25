@@ -18,7 +18,7 @@ public class SurveyForm implements Table {
 	public SurveyForm() {}
 	
 	public int getId() { return this._id; }
-	
+	public List<SurveyFormQuestion> getQuestions() { return this.questions; }
 	public String getTitle() { return this.title; }
 	public int getResearcher() { return this._researcher; }
 	
@@ -30,8 +30,6 @@ public class SurveyForm implements Table {
 		for (SurveyFormQuestion q : this.questions)
 			q.retrieveChoices();
 	}
-	
-	public List<SurveyFormQuestion> getQuestions() { return this.questions; }
 	
 	public void create() {
 		String q = "INSERT INTO survey_forms (researcher, title) "
