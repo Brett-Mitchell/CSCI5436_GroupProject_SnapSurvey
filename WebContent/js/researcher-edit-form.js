@@ -180,7 +180,23 @@ function newQuestionHTML(id, text, type) {
                 'class="form-control w-100"' +
             '>' + text + '</textarea>' +
         '</div>' +
+        '<div class="form-group mb-1 p-1">' + 
+            '<select class="selectpicker w-100"' +
+                    'id="question-new-' + id + '-type-picker">' +
+                '<option value="multiple_choice">Multiple choice</option>' +
+                '<option value="number">Number</option>' +
+                '<option value="radio_select">Radio select</option>' +
+                '<option value="text">Text</option>' +
+            '</select>' +
+        '</div>' +
         '<div id="question-new-' + id + '-choices" class="choices-column form-group p-1">' +
+            '<div id="question-' + id + '-new-choice-row" class="row">' + 
+                '<button id="question-' + id + '-new-choice"' +
+                        'type="button"' +
+                        'class="btn btn-primary mx-auto new-choice-button">' +
+                '+' +
+                '</button>' +
+            '</div>' +
         '</div>' +
         '<div class="form-group">' +
             '<button type="button" ' +
@@ -213,8 +229,27 @@ function addQuestion() {
 
     $('#question-list').append(newQuestion);
 
+    if (['multiple_choice', 'radio_select'].includes(questionType)) {
+        $('#question-new-' + actionId + '-choices').show();
+    } else {
+        $('#question-new-' + actionId + '-choices').hide();
+    }
+
+    var selectPicker = $('#question-new-' + actionId + '-type-picker');
+    selectPicker.selectpicker('refresh');
+
+    // Set the default value for question type select picker
+    selectPicker.selectpicker('val', questionType);
+
+    selectPicker.on('changed.bs.select', (function(_qId) {
+        return function(event, a, b, previousValue) { updateQuestionType(_qId, event.target.value, previousValue); };
+    })('new-' + actionId));
+
     $('#question-text-new-' + actionId).blur((function(_id) {
         return function(focusEvent) { updateQuestionText(_id, focusEvent.target.value); };
+    })('new-' + actionId));
+    $('#question-' + actionId + '-new-choice').click((function(_id) {
+        return function() { addChoice(_id); };
     })('new-' + actionId));
     $('#question-delete-button-new-' + actionId).click((function(_id) {
         return function() { deleteQuestion(_id); };

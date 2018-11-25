@@ -3,6 +3,7 @@
 
 <#macro head>
     <script>
+    var deployId = ${deploy.id}
     var questions = {
         <#assign i=1>
         <#list survey.questions as q>

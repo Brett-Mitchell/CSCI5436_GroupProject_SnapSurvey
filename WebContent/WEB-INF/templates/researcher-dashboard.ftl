@@ -32,7 +32,12 @@
 </#macro>
 
 <#macro profile>
-    <div class="col-auto ml-auto"><img src="/generic-user-profile-img.jpeg" width="50px" height="50px" /></div>
+    <div class="ml-auto my-auto col-auto">
+        <button id="logout-button"
+                class="btn btn-primary">
+        Log out
+        </button>
+    </div>
 </#macro>
 
 <#macro body>

@@ -1,6 +1,8 @@
 package main.database;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Comparator;
 
 public abstract class SurveyResponseValue implements Table {
 	
@@ -9,6 +11,18 @@ public abstract class SurveyResponseValue implements Table {
 	private int _survey_response;
 	
 	// No SELECT getter here as this is an abstract table
+	
+	// Sort class
+	public static class SortByQuestion implements Comparator<SurveyResponseValue> {
+		@Override
+		public int compare(SurveyResponseValue a, SurveyResponseValue b) {
+			return a._question - b._question;
+		}
+	}
+	
+	public int getId() { return this._id; }
+	public int getQuestion() { return this._question; }
+	public int getSurveyResponse() { return this._survey_response; }
 	
 	@Override
 	public void set(String field, Object value) {
@@ -31,8 +45,17 @@ public abstract class SurveyResponseValue implements Table {
 				 + "VALUES (" + this._question + ", " + this._survey_response + ");";
 		
 		try {
+			DB.beginPersistantConnection();
+			
 			DB.execNonQuery(q);
-		} catch(SQLException e) {}
+			ResultSet rs = DB.execQuery("SELECT LAST_INSERT_ID();");
+			rs.next();
+			this._id = rs.getInt(1);
+			
+			DB.terminatePersistantConnection();
+		} catch(SQLException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	@Override

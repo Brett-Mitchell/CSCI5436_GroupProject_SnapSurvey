@@ -31,6 +31,7 @@ public class ApiServlet extends HttpServlet {
 		//   	 .put("mapped-url", new Endpoint() { /* Implement getApiResponse */ })
 		endpoints.put("/login", new LoginEndpoint());
 		endpoints.put("/register", new RegisterEndpoint());
+		endpoints.put("/submit-survey", new SubmitSurveyEndpoint());
 		endpoints.put("/add-survey-form", new AddSurveyFormEndpoint());
 		endpoints.put("/delete-survey-form", new DeleteSurveyFormEndpoint());
 		endpoints.put("/deploy-survey-form", new DeploySurveyFormEndpoint());

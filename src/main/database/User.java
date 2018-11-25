@@ -36,9 +36,10 @@ public abstract class User implements Table {
 		this.password = password;
 	}
 	
-	public int getId() {
-		return this.id;
-	}
+	public int getId() { return this.id; }
+	public String getUsername() { return this.username; }
+	public String getPassword() { return this.password; }
+	public String getEmail() { return this.email; }
 	
 	public void set(String field, Object value) {
 		switch (field) {

@@ -23,8 +23,10 @@ import main.content.authorizers.Authorizer.AuthorizationResult;
 import main.content.authorizers.ParticipantAuthorizer;
 import main.content.authorizers.ResearcherAuthorizer;
 import main.content.context.ContextBuilder;
+import main.content.context.ParticipantDashboardContextBuilder;
 import main.content.context.ResearcherDashboardContextBuilder;
 import main.content.context.ResearcherEditSurveyFormContextBuilder;
+import main.content.context.ResearcherViewSurveyResultsContextBuilder;
 import main.content.context.TakeSurveyContextBuilder;
 
 /**
@@ -80,19 +82,19 @@ public class ContentServlet extends HttpServlet {
 		pages.put("/home-page", new PageEntry("home-page.ftl"));
 		pages.put("/login", new PageEntry("login.ftl"));
 		pages.put("/register", new PageEntry("register.ftl"));
+		pages.put("/submission-thanks", new PageEntry("submission-thanks.ftl"));
 		pages.put("/r/dashboard", new PageEntry("researcher-dashboard.ftl",
 												new ResearcherDashboardContextBuilder(),
 												new ResearcherAuthorizer()));
 		pages.put("/r/edit-survey", new PageEntry("researcher-edit-survey-form.ftl",
 												  new ResearcherEditSurveyFormContextBuilder(),
 												  new ResearcherAuthorizer()));
-		pages.put("/p/dashboard", new PageEntry(
-				"participant-dashboard.ftl",
-				new ContextBuilder() {
-					public HashMap<String, Object> getContext(HttpServletRequest req) {
-						return new HashMap<String, Object>();
-					}
-				}, new ParticipantAuthorizer()));
+		pages.put("/r/view-survey", new PageEntry("researcher-view-survey-results.ftl",
+												  new ResearcherViewSurveyResultsContextBuilder(),
+												  new ResearcherAuthorizer()));
+		pages.put("/p/dashboard", new PageEntry("participant-dashboard.ftl",
+												new ParticipantDashboardContextBuilder(),
+												new ParticipantAuthorizer()));
 		pages.put("/p/take-survey", new PageEntry("take-survey.ftl",
 												  new TakeSurveyContextBuilder(),
 												  new ParticipantAuthorizer()));

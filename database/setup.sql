@@ -125,13 +125,13 @@ CREATE TABLE survey_deploy_invites (
 -- participant and the related survey form are recorded. Only one response per
 -- participant is allowed
 CREATE TABLE survey_responses (
-    id          INT NOT NULL AUTO_INCREMENT,
-    survey_form INT NOT NULL,
-    invite      INT NOT NULL,
+    id            INT NOT NULL AUTO_INCREMENT,
+    survey_deploy INT NOT NULL,
+    invite        INT NOT NULL,
 
     PRIMARY KEY (id),
-    UNIQUE  KEY (survey_form, invite),
-    FOREIGN KEY (survey_form) REFERENCES survey_forms (id) ON DELETE CASCADE,
+    UNIQUE  KEY (survey_deploy, invite),
+    FOREIGN KEY (survey_deploy) REFERENCES survey_deploys (id) ON DELETE CASCADE,
     FOREIGN KEY (invite) REFERENCES survey_deploy_invites (id) ON DELETE CASCADE
 ) ENGINE=MyISAM;
 
@@ -143,10 +143,19 @@ CREATE TABLE survey_response_values (
     survey_response INT NOT NULL,
 
     PRIMARY KEY (id),
-    UNIQUE  KEY (id, question, survey_response),
     FOREIGN KEY (question) REFERENCES survey_form_questions(id) ON DELETE CASCADE,
     FOREIGN KEY (survey_response) REFERENCES survey_responses(id) ON DELETE CASCADE
 ) ENGINE=MyISAM;
+
+DELIMITER //
+
+CREATE TRIGGER survey_response_values_survey_response_on_delete_cascade AFTER DELETE ON survey_responses
+FOR EACH ROW BEGIN
+    DELETE FROM survey_response_values
+    WHERE survey_response_values.survey_response = OLD.id;
+END//
+
+DELIMITER ;
 
 -- survey_response_text_values are bodies of text in response to a textual
 -- response question.
@@ -165,13 +174,12 @@ CREATE TABLE survey_response_text_values (
 CREATE TABLE survey_response_choice_values (
     id       INT NOT NULL,
     choice   TINYINT NOT NULL,
-    question SMALLINT NOT NULL,
 
     -- since id is unique, only choice can have multiple values in any given PK
     -- pair
     PRIMARY KEY (id, choice),
     FOREIGN KEY (id) REFERENCES survey_response_values(id) ON DELETE CASCADE,
-    FOREIGN KEY (choice, question) REFERENCES survey_form_question_choices(id, question)
+    FOREIGN KEY (choice) REFERENCES survey_form_question_choices(id)
 ) ENGINE=MyISAM;
 
 -- STORED PROCEDURES
@@ -331,3 +339,6 @@ VALUES
 
 INSERT INTO survey_deploys (survey_form, ended, `start`)
 VALUES (1, 0, NOW());
+
+INSERT INTO survey_deploy_invites (survey_deploy, email)
+VALUES (1, 'p1@gmail.com');

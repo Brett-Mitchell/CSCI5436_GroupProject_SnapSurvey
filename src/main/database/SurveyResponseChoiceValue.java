@@ -4,12 +4,14 @@ import java.sql.SQLException;
 
 public class SurveyResponseChoiceValue extends SurveyResponseValue {
 	
-	private int _choice;
+	protected int _choice;
 	
 	public static SelectBuilder<SurveyResponseChoiceValue> SELECT() {
 		return new SelectBuilder<SurveyResponseChoiceValue>("survey_response_choice_values", SurveyResponseChoiceValue.class)
 				.joinOn("survey_response_values", new String[] {"id"});
 	}
+	
+	public int getChoice() { return this._choice; }
 
 	@Override
 	public void set(String field, Object value) {
@@ -32,7 +34,9 @@ public class SurveyResponseChoiceValue extends SurveyResponseValue {
 		
 		try {
 			DB.execNonQuery(q);
-		} catch(SQLException e) {}
+		} catch(SQLException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	@Override

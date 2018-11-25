@@ -24,8 +24,8 @@ public class SurveyForm implements Table {
 	
 	public void retrieveQuestions() {
 		this.questions = SurveyFormQuestion.SELECT()
-				.where("form", Integer.toString(this._id))
-				.get();
+										   .where("form", Integer.toString(this._id))
+										   .get();
 		
 		for (SurveyFormQuestion q : this.questions)
 			q.retrieveChoices();

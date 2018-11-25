@@ -110,6 +110,23 @@ function findSurvey(id) {
         if (surveys[k].id == id) return surveys[k];
 }
 
+// Obtained from: https://stackoverflow.com/questions/179355/clearing-all-cookies-with-javascript
+function deleteAllCookies() {
+    var cookies = document.cookie.split(";");
+
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf("=");
+        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+}
+
+function logout() {
+    deleteAllCookies();
+    window.location.href = '/content/home-page';
+}
+
 window.onload = function() {
 
     // Force the browser to hard reload when navigating to the dashboard with
@@ -119,6 +136,8 @@ window.onload = function() {
             window.location.reload(); 
         }
     });
+    
+    $('#logout-button').click(function() { logout(); });
 
     $('#new-survey-form-modal').on('hidden.bs.modal', clearModal);
     $('#confirm-create-survey-form').click(function() {

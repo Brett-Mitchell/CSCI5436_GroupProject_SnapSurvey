@@ -2,7 +2,8 @@
 var currentQuestion = 1;
 
 function next() {
-    if (currentQuestion < Object.keys(questions).length) {
+    var numQuestions = Object.keys(questions).length;
+    if (currentQuestion < numQuestions) {
         recordAnswer(currentQuestion);
         $('#question-' + questions[currentQuestion.toString()].id).hide();
         currentQuestion++;
@@ -20,30 +21,59 @@ function previous() {
 }
 
 function submit() {
+    var submission = [];
+    for (var q in questions) {
+        submission.push(questions[q].answer);
+    }
 
+    $.ajax({
+        url: '/api/submit-survey',
+        method: 'POST',
+        data: {
+            submission: JSON.stringify(submission),
+            deployId: deployId
+        }
+    })
+    .done(function(data) {
+        window.location.href = '/content/submission-thanks';
+    })
+    .fail(function(err) {
+        console.error(err);
+    });
+}
+
+function recordAllAnswers() {
+    var canSubmit = true;
+    for (var i in questions) {
+        recordAnswer(i);
+        var vals = questions[i].answer.answerValues;
+        canSubmit = canSubmit && (!!vals[0] || vals.length === 0);
+    }
+
+    if (canSubmit)
+        $('#submit').removeAttr('disabled');
 }
 
 function recordAnswer(questionIdx) {
     var qToRecord = questions[questionIdx.toString()];
     if (qToRecord.type === 'text') {
-        qToRecord.answer = $('#question-answer-text-' + qToRecord.id).val();
-    } else if (qToRecord.type === 'multiple_choice') {
-        qToRecord.answer = [];
+        qToRecord.answer = {
+            question: qToRecord.id,
+            answerType: qToRecord.type,
+            answerValues: [$('#question-answer-text-' + qToRecord.id).val()]
+        };
+    } else if (qToRecord.type === 'multiple_choice' || qToRecord.type === 'radio_select') {
+        qToRecord.answer = {
+            question: qToRecord.id,
+            answerType: qToRecord.type,
+            answerValues: []
+        };
         for (var cIdx in qToRecord.choices) {
             var c = qToRecord.choices[cIdx];
-            qToRecord.answer.push({
-                choiceId: c.id,
-                value: $('#question-' + qToRecord.id + '-choice-' + c.id).is(':checked')
-            });
+            if ($('#question-' + qToRecord.id + '-choice-' + c.id).is(':checked'))
+                qToRecord.answer.answerValues.push(c.id.toString());
         }
     }
-
-    var canSubmit = false;
-    for (var q in questions)
-        canSubmit = canSubmit && (!!questions[q].answer);
-
-    if (canSubmit)
-        $('#submit').removeAttr('disabled');
 }
 
 $(document).ready(function() {
@@ -52,6 +82,8 @@ $(document).ready(function() {
     for (var i in questions) {
         $('#question-' + questions[i].id).hide();
     }
+
+    $('.question-input').blur(function() { recordAllAnswers(); });
 
     $('#question-' + questions['1'].id).show();
 

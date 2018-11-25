@@ -4,22 +4,26 @@ import java.sql.SQLException;
 
 public class SurveyDeployInvite implements Table {
 	
-	private int _id = -1;
-	private int _survey_deploy;
-	public String email;
+	protected int id = -1;
+	protected int survey_deploy;
+	protected String email;
 	
 	public static SelectBuilder<SurveyDeployInvite> SELECT() {
 		return new SelectBuilder<SurveyDeployInvite>("survey_deploy_invites", SurveyDeployInvite.class);
 	}
+	
+	public int getId() { return this.id; }
+	public int getSurveyDeploy() { return this.survey_deploy; }
+	public String getEmail() { return this.email; }
 
 	@Override
 	public void set(String field, Object value) {
 		switch (field) {
 		case "id":
-			this._id = ((Integer)value).intValue();
+			this.id = ((Integer)value).intValue();
 			break;
 		case "survey_deploy":
-			this._survey_deploy = ((Integer)value).intValue();
+			this.survey_deploy = ((Integer)value).intValue();
 			break;
 		case "email":
 			this.email = (String)value;
@@ -32,7 +36,7 @@ public class SurveyDeployInvite implements Table {
 	@Override
 	public void create() {
 		String q = "INSERT INTO survey_deploy_invites (survey_deploy, email) "
-				 + "VALUES (" + this._survey_deploy + ", '" + this.email + "');";
+				 + "VALUES (" + this.survey_deploy + ", '" + this.email + "');";
 		
 		try {
 			DB.execNonQuery(q);
@@ -44,8 +48,8 @@ public class SurveyDeployInvite implements Table {
 	@Override
 	public void update() {
 		String q = "UPDATE survey_deploy_invites "
-				 + "SET survey_deploy=" + this._survey_deploy + ", email='" + this.email + "' "
-				 + "WHERE id=" + this._id + ";";
+				 + "SET survey_deploy=" + this.survey_deploy + ", email='" + this.email + "' "
+				 + "WHERE id=" + this.id + ";";
 		
 		try {
 			DB.execNonQuery(q);
@@ -56,10 +60,10 @@ public class SurveyDeployInvite implements Table {
 	public void delete() {
 		String q = "DELETE FROM survey_deploy_invites ";
 		
-		if (this._id != -1)
-			q += "WHERE id=" + this._id + ";";
+		if (this.id != -1)
+			q += "WHERE id=" + this.id + ";";
 		else
-			q += "WHERE survey_deploy=" + this._survey_deploy + " AND email='" + this.email + "';";
+			q += "WHERE survey_deploy=" + this.survey_deploy + " AND email='" + this.email + "';";
 		
 		try {
 			DB.execNonQuery(q);
